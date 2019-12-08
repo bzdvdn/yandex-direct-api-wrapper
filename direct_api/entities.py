@@ -1,12 +1,13 @@
 from typing import Union, Optional
 from .utils import generate_params, convert
 
-__all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient']
+__all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
+           'Campaign',]
 
 
 class BaseEntity(object):
     def __init__(self, client: object, service: str = '') -> None:
-        self.__client = client
+        self._client = client
         self.service = service
 
     def __str__(self) -> str:
@@ -23,7 +24,7 @@ class BaseEntity(object):
         :return: dict
         """
         params = {'SelectionCriteria': {'Ids': ids}}
-        return self.__client._send_api_request(self.service.lower(), method, params).json()
+        return self._client._send_api_request(self.service.lower(), method, params).json()
 
     def _add(self, objects: list) -> dict:
         params = {
@@ -35,10 +36,10 @@ class BaseEntity(object):
         params = {
             self.service: objects
         }
-        return self.__client._send_api_request(self.service.lower(), 'update', params).json()
+        return self._client._send_api_request(self.service.lower(), 'update', params).json()
 
     def _get(self, params: dict) -> dict:
-        return self.__client._send_api_request(self.service.lower(), 'get', params).json()
+        return self._client._send_api_request(self.service.lower(), 'get', params).json()
 
     def _delete(self, ids: list) -> dict:
         return self._execute_method_by_ids('delete', ids)
@@ -74,7 +75,7 @@ class AgencyClient(BaseEntity):
             params['Notification'] = notification
         if settings is not None:
             params['Settings'] = settings
-        return self.__client._send_api_request(self.service.lower(), 'add', params).json()
+        return self._client._send_api_request(self.service.lower(), 'add', params).json()
 
     def get(self, field_names: list, logins: Optional[list] = None,
             archived: Optional[str] = None, limit: int = 500, offset: int = 0) -> dict:
@@ -245,7 +246,7 @@ class AdImage(BaseEntity):
                 'AdImageHashes': hashes
             }
         }
-        return self.__client._send_api_request(self.service.lower(), 'delete', params).json()
+        return self._client._send_api_request(self.service.lower(), 'delete', params).json()
 
     def get(self, field_names: list, ad_images_hashes: Optional[list] = None,
             associated: Optional[str] = None, limit: int = 500, offset: int = 0) -> dict:
@@ -472,7 +473,7 @@ class AudienceTarget(BaseEntity):
         params = {
             'Bids': bids
         }
-        return self.__client._send_api_request(self.service.lower(), 'setBids', params).json()
+        return self._client._send_api_request(self.service.lower(), 'setBids', params).json()
 
     def suspend(self, ids: list) -> dict:
         """
@@ -518,7 +519,7 @@ class Bid(BaseEntity):
         :return: dict
         """
         params = {'Bids': bids}
-        return self.__client._send_api_request('bids', 'set', params).json()
+        return self._client._send_api_request('bids', 'set', params).json()
 
     def set_auto(self, bids: list) -> dict:
         """
@@ -527,4 +528,189 @@ class Bid(BaseEntity):
         :return: dict
         """
         params = {'Bids': bids}
-        return self.__client._send_api_request('bids', 'setAuto', params).json()
+        return self._client._send_api_request('bids', 'setAuto', params).json()
+
+
+class BidsModifier(BaseEntity):
+    def __index__(self, client: object, service: str = 'BidsModifiers') -> None:
+        super().__init__(client, service)
+
+    def add(self, bid_modifiers: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/add-docpage/
+        :param bid_modifiers: list
+        :return: dict
+        """
+        return self._add(bid_modifiers)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] = None, campaign_ids: Optional[list] = None,
+            ad_group_ids: Optional[list] = None, types: Optional[list] = None, levels: Optional[list] = None,
+            mobile_adjustment_field_names: Optional[list] = None,
+            desktop_adjustment_field_names: Optional[list] = None,
+            demographics_adjustment_field_names: Optional[list] = None,
+            retargeting_adjustment_field_names: Optional[list] = None,
+            regional_adjustment_field_names: Optional[list] = None,
+            video_adjustment_field_names: Optional[list] = None,
+            limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param campaign_ids: list
+        :param ad_group_ids: list
+        :param types: list
+        :param levels: list
+        :param mobile_adjustment_field_names: list
+        :param desktop_adjustment_field_names: list
+        :param demographics_adjustment_field_names: list
+        :param retargeting_adjustment_field_names: list
+        :param regional_adjustment_field_names: list
+        :param video_adjustment_field_names: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        local_variables = locals()
+        params = {
+            'SelectCriteria': generate_params(
+                fields=['ids', 'campaign_ids', 'ad_group_ids', 'types', 'levels'],
+                function_kwargs=local_variables
+            ),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset}
+        }
+        params.update(
+            generate_params(
+                fields=['mobile_adjustment_field_names', 'desktop_adjustment_field_names',
+                        'demographics_adjustment_field_names', 'retargeting_adjustment_field_names',
+                        'regional_adjustment_field_names', 'video_adjustment_field_names'],
+                function_kwargs=local_variables
+            )
+        )
+        return self._get(params)
+
+    def set(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/set-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('set', ids)
+
+    def toggle(self, bid_modifier_toggle_items: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/toggle-docpage/
+        :param bid_modifier_toggle_items: list
+        :return: dict
+        """
+        params = {'BidModifierToggleItems': bid_modifier_toggle_items}
+        return self._client._send_api_request(self.service.lower(), 'toggle', params).json()
+
+
+class Campaign(BaseEntity):
+    def __init__(self, client: object, service: str = 'Campaigns') -> None:
+        super().__init__(client, service)
+
+    def add(self, campaigns: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/add-docpage/
+        :param campaigns: list
+        :return: dict
+        """
+        return self._add(campaigns)
+
+    def archive(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/archive-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('archive', ids)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] =  None, types: Optional[list] = None,
+            states: Optional[list] = None, statuses: Optional[list] = None, statuses_payments: Optional[list] = None,
+            text_campaign_field_names: Optional[list] = None,
+            mobile_app_campaign_field_names: Optional[list] = None,
+            dynamic_text_campaign_field_names: Optional[list] = None,
+            cpm_banner_campaign_field_names: Optional[list] = None,
+            limit: int  = 1000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param types: list
+        :param states: list
+        :param statuses: list
+        :param statuses_payments: list
+        :param text_campaign_field_names: list
+        :param mobile_app_campaign_field_names: list
+        :param dynamic_text_campaign_field_names: list
+        :param cpm_banner_campaign_field_names: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        local_variables = locals()
+        params = {
+            'SelectCriteria': generate_params(
+                fields=['ids', 'types', 'states', 'statuses', 'statuses_payments'],
+                function_kwargs=local_variables
+            ),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset},
+        }
+        params.update(generate_params(
+            fields=['text_campaign_field_names', 'mobile_app_campaign_field_names',
+                    'dynamic_text_campaign_field_names', 'cpm_banner_campaign_field_names'],
+            function_kwargs=local_variables
+        ))
+        return self._get(params)
+
+    def resume(self, ids) -> ids:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/resume-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('resume', ids)
+
+    def suspend(self, ids) -> ids:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/suspend-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('suspend', ids)
+
+    def unarchive(self, ids) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/unarchive-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('unarchive', ids)
+
+    def update(self, campaigns: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/update-docpage/
+        :param campaigns: list
+        :return: dict
+        """
+        return self._update(campaigns)
+
