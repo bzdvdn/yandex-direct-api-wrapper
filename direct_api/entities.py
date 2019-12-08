@@ -6,7 +6,7 @@ __all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', '
 
 class BaseEntity(object):
     def __init__(self, client: object, service: str = '') -> None:
-        self.client = client
+        self.__client = client
         self.service = service
 
     def __str__(self) -> str:
@@ -23,7 +23,7 @@ class BaseEntity(object):
         :return: dict
         """
         params = {'SelectionCriteria': {'Ids': ids}}
-        return self._send_api_request(self.service.lower(), method, params).json()
+        return self.__client._send_api_request(self.service.lower(), method, params).json()
 
     def _add(self, objects: list) -> dict:
         params = {
@@ -35,10 +35,10 @@ class BaseEntity(object):
         params = {
             self.service: objects
         }
-        return self.client._send_api_request(self.service.lower(), 'update', params).json()
+        return self.__client._send_api_request(self.service.lower(), 'update', params).json()
 
     def _get(self, params: dict) -> dict:
-        return self.client._send_api_request(self.service.lower(), 'get', params).json()
+        return self.__client._send_api_request(self.service.lower(), 'get', params).json()
 
     def _delete(self, ids: list) -> dict:
         return self._execute_method_by_ids('delete', ids)
@@ -74,7 +74,7 @@ class AgencyClient(BaseEntity):
             params['Notification'] = notification
         if settings is not None:
             params['Settings'] = settings
-        return self.client._send_api_request(self.service.lower(), 'add', params).json()
+        return self.__client._send_api_request(self.service.lower(), 'add', params).json()
 
     def get(self, field_names: list, logins: Optional[list] = None,
             archived: Optional[str] = None, limit: int = 500, offset: int = 0) -> dict:
@@ -245,7 +245,7 @@ class AdImage(BaseEntity):
                 'AdImageHashes': hashes
             }
         }
-        return self.client._send_api_request(self.service.lower(), 'delete', params).json()
+        return self.__client._send_api_request(self.service.lower(), 'delete', params).json()
 
     def get(self, field_names: list, ad_images_hashes: Optional[list] = None,
             associated: Optional[str] = None, limit: int = 500, offset: int = 0) -> dict:
@@ -472,7 +472,7 @@ class AudienceTarget(BaseEntity):
         params = {
             'Bids': bids
         }
-        return self.client._send_api_request(self.service.lower(), 'setBids', params).json()
+        return self.__client._send_api_request(self.service.lower(), 'setBids', params).json()
 
     def suspend(self, ids: list) -> dict:
         """
@@ -518,7 +518,7 @@ class Bid(BaseEntity):
         :return: dict
         """
         params = {'Bids': bids}
-        return self.client._send_api_request('bids', 'set', params).json()
+        return self.__client._send_api_request('bids', 'set', params).json()
 
     def set_auto(self, bids: list) -> dict:
         """
@@ -527,4 +527,4 @@ class Bid(BaseEntity):
         :return: dict
         """
         params = {'Bids': bids}
-        return self.client._send_api_request('bids', 'setAuto', params).json()
+        return self.__client._send_api_request('bids', 'setAuto', params).json()
