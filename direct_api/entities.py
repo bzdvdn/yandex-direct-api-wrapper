@@ -2,7 +2,7 @@ from typing import Union, Optional
 from .utils import generate_params, convert
 
 __all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
-           'Campaign',]
+           'Campaign', ]
 
 
 class BaseEntity(object):
@@ -643,13 +643,13 @@ class Campaign(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] =  None, types: Optional[list] = None,
+    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
             states: Optional[list] = None, statuses: Optional[list] = None, statuses_payments: Optional[list] = None,
             text_campaign_field_names: Optional[list] = None,
             mobile_app_campaign_field_names: Optional[list] = None,
             dynamic_text_campaign_field_names: Optional[list] = None,
             cpm_banner_campaign_field_names: Optional[list] = None,
-            limit: int  = 1000, offset: int = 0) -> dict:
+            limit: int = 1000, offset: int = 0) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/get-docpage/
         :param field_names: list
@@ -714,3 +714,48 @@ class Campaign(BaseEntity):
         """
         return self._update(campaigns)
 
+
+class Change(BaseEntity):
+    def __init__(self, client: object, service: str = 'changes') -> None:
+        super().__init__(client, service)
+
+    def _check(self, method: str, params: dict) -> dict:
+        """
+        :param method: str
+        :param params: dic
+        :return: dict
+        """
+        params = {convert(k): v for k, v in params if k != 'self'}
+        return self._client._send_api_request(self.service.lower(), method, params).json()
+
+    def check_dictionaries(self, timestamp: str) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/changes/checkDictionaries-docpage/
+        :param timestamp: str
+        :return: dict
+        """
+        return self._check('checkDictionaries', locals())
+
+    def check_campaigns(self, timestamp: str) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/changes/checkDictionaries-docpage/
+        :param timestamp: str
+        :return: dict
+        """
+        return self._check('checkCampaigns', locals())
+
+    def check(self, timestamp: str, field_names: list, campaign_ids: Optional[list],
+              ad_group_ids: Optional[list] = None, ad_ids: Optional[list] = None) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/changes/check-docpage/
+        :param timestamp: str
+        :param field_names: list
+        :param campaign_ids: list
+        :param ad_group_ids: list
+        :param ad_ids: list
+        :return: dict
+        """
+        if not campaign_ids and not ad_group_ids and not ad_ids:
+            raise ValueError('campaign_ids, ag_group_ids, ad_ids must be implement one of them')
+
+        return self._check('check', locals())
