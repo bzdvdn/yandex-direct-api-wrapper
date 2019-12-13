@@ -1,8 +1,9 @@
 from typing import Union, Optional
 from .utils import generate_params, convert
+from .exceptions import ParameterError
 
 __all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
-           'Campaign', ]
+           'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword']
 
 
 class BaseEntity(object):
@@ -759,3 +760,276 @@ class Change(BaseEntity):
             raise ValueError('campaign_ids, ag_group_ids, ad_ids must be implement one of them')
 
         return self._check('check', locals())
+
+
+class Creative(BaseEntity):
+    def __init__(self, client: object, service: str = 'Creatives') -> None:
+        super().__init__(client, service)
+
+    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
+            video_extension_creative_field_names: Optional[list] = None,
+            cpc_video_creative_field_names: Optional[list] = None,
+            cpm_video_creative_field_names: Optional[list] = None,
+            limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/creatives/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param types: list
+        :param video_extension_creative_field_names: list
+        :param cpc_video_creative_field_names: list
+        :param cpm_video_creative_field_names: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {
+            'SelectCriteria': generate_params(['ids', types], locals()),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset}
+        }
+        params.update(generate_params(
+            fields=['video_extension_creative_field_names', 'cpc_video_creative_field_names',
+                    'cpm_video_creative_field_names'],
+            function_kwargs=locals()
+        ),
+        )
+        return self._get(params)
+
+
+class Dictionary(BaseEntity):
+    def __init__(self, client: object, service: str = 'Dictionaries') -> None:
+        super().__init__(client, service)
+
+    def get(self, dictionary_names: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dictionaries/get-docpage/
+        :param dictionary_names: list
+        :return: dict
+        """
+        params = {
+            'DictionaryNames': dictionary_names
+        }
+        return self._get(params)
+
+
+class DynamicTextAdTarget(BaseEntity):
+    def __init__(self, client: object, service: str = 'dynamictextadtargets') -> None:
+        super().__init__(client, service)
+
+    def add(self, webpages: list, bid: Optional[str] = None, context_bid: Optional[str] = None,
+            strategy_priority: Optional[str] = None) -> None:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/add-docpage/
+        :param webpages: list
+        :param bid: str
+        :param context_bid: str
+        :param strategy_priority: str
+        :return: dict
+        """
+        params = {
+            'Webpages': webpages,
+        }
+        params.update(
+            generate_params(
+                fields=['bid', 'context_bid', 'strategy_priority'],
+                function_kwargs=locals()
+            )
+        )
+        return self._client._send_api_request(self.service.lower(), 'add', params).json()
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] = None,
+            ad_group_ids: Optional[list] = None, campaign_ids: Optional[list] = None,
+            states: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param ad_group_ids: list
+        :param campaign_ids: list
+        :param states: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        if not ids and not ad_group_ids and not campaign_ids:
+            raise ParameterError(['ids', 'campaign_ids', 'ad_group_ids'])
+
+        params = {
+            'SelectCriteria': generate_params(
+                fields=['ids', 'ad_group_ids', 'campaign_ids', 'states'],
+                function_kwargs=locals()
+            ),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset}
+        }
+        return self._get(params)
+
+    def resume(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/resume-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('resume', ids)
+
+    def suspend(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/suspend-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('suspend', ids)
+
+    def set_bids(self, bids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/setBids-docpage/
+        :param bids: list
+        :return: dict
+        """
+        params = {
+            'Bids': bids
+        }
+        return self._client._send_api_request(self.service.lower(), 'setBids', params).json()
+
+
+class KeywordBid(BaseEntity):
+    def __init__(self, client: object, service: str = 'KeywordBids') -> None:
+        super().__init__(client, service)
+
+    def get(self, field_names, campaign_ids: Optional[list] = None, ad_group_ids: Optional[list] = None,
+            keyword_ids: Optional[list] = None, serving_statuses: Optional[list] = None,
+            search_field_names: Optional[list] = None, network_field_names: Optional[list] = None,
+            limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordbids/get-docpage/
+        :param field_names: list
+        :param campaign_ids: list
+        :param ad_group_ids: list
+        :param keyword_ids: list
+        :param serving_statuses: list
+        :param search_field_names: list
+        :param network_field_names: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        if not campaign_ids and not ad_group_ids and not keyword_ids:
+            raise ParameterError(['campaign_ids', 'ad_group_ids', 'keyword_ids'])
+        local_variables = locals()
+        params = {
+            'SelectCriteria': generate_params(
+                fields=['campaign_ids', 'ad_group_ids', 'keyword_ids', 'serving_statuses'],
+                function_kwargs=local_variables
+            ),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset}
+        }
+        params.update(
+            generate_params(
+                fields=['search_field_names', 'network_field_names'],
+                function_kwargs=local_variables
+            )
+        )
+        return self._get(params)
+
+    def set(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordbids/set-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('set', ids)
+
+    def set_auto(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordbids/setAuto-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('setAuto', ids)
+
+
+class Keyword(BaseEntity):
+    def __init__(self, client: object, service: str = 'Keywords') -> None:
+        super().__init__(client, service)
+
+    def add(self, keywords: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/add-docpage/
+        :param keywords: list
+        :return: dict
+        """
+        return self._add(keywords)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] = None, ad_group_ids: Optional[list] = None,
+            campaign_ids: Optional[list] = None, states: Optional[list] = None, statuses: Optional[list] = None,
+            serving_statuses: Optional[list] = None, modified_since: Optional[str] = None,
+            limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param ad_group_ids: list
+        :param campaign_ids: list
+        :param states: list
+        :param statuses: list
+        :param serving_statuses: list
+        :param modified_since: str
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        if not ids and not ad_group_ids and not campaign_ids:
+            raise ParameterError(['ids', 'ad_group_ids', 'campaign_ids'])
+        params = {
+            'SelectCriteria': generate_params(
+                fields=['ids', 'ad_group_ids', 'campaign_ids', 'states', 'statuses', 'serving_statuses',
+                        'modified_since'],
+                function_kwargs=locals()
+            ),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset}
+        }
+        return self._get(params)
+
+    def resume(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/resume-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('resume', ids)
+
+    def suspend(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/suspend-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._execute_method_by_ids('suspend', ids)
+
+    def update(self, keywords: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/update-docpage/
+        :param keywords: list
+        :return: dict
+        """
+        return self._update(keywords)
+

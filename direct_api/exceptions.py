@@ -27,3 +27,12 @@ class YdAPIError(YdException):
 
     def __str__(self):
         return f'{self.code}. {self.message}. {self.description} request_id={self.request_id}'
+
+
+class ParameterError(BaseException):
+    def __init__(self, params: list) -> None:
+        super().__init__(params)
+        self.params = params
+
+    def __str__(self) -> str:
+        return f'Must be implemented one of {self.params}'
