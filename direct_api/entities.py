@@ -3,7 +3,9 @@ from .utils import generate_params, convert
 from .exceptions import ParameterError
 
 __all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
-           'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword', 'Lead']
+           'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword', 'Lead',
+           'NegativeKeywordSharedSet', 'Sitelink', 'KeywordsResearch', 'RetargetingList', 'VCard', 'TurboPage',
+           '']
 
 
 class BaseEntity(object):
