@@ -200,6 +200,8 @@ class AdGroup(BaseEntity):
         :param offset int
         :return: dict
         """
+        if not ids and not campaign_ids:
+            raise ParameterError(['ids', 'campaign_ids'])
         params = {
             'SelectionCriteria': generate_params(
                 ['campaign_ids', 'ids', 'types', 'statuses', 'serving_statuses',
@@ -345,6 +347,9 @@ class Ad(BaseEntity):
         :param offset: int
         :return: dict
         """
+        if not ids and not ad_group_ids and not campaign_ids:
+            raise ParameterError(['ids', 'ad_group_ids', 'campaign_ids'])
+
         local_variables = locals()
         params = {
             'SelectionCriteria': generate_params(
@@ -431,14 +436,14 @@ class AudienceTarget(BaseEntity):
         return self._delete(ids)
 
     def get_audience_targets(self, field_names: list, ids: Optional[list] = None,
-                             ad_groups_ids: Optional[list] = None, campaign_ids: Optional[list] = None,
+                             ad_group_ids: Optional[list] = None, campaign_ids: Optional[list] = None,
                              retargeting_list_ids: Optional[list] = None, interest_ids: Optional[list] = None,
                              states: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/get-docpage/
         :param field_names: list
         :param ids: list
-        :param ad_groups_ids: list
+        :param ad_group_ids: list
         :param campaign_ids: list
         :param retargeting_list_ids: list
         :param interest_ids: list
@@ -447,6 +452,9 @@ class AudienceTarget(BaseEntity):
         :param offset: int
         :return: dict
         """
+        if not ids and not ad_group_ids and not campaign_ids:
+            raise ParameterError(['ids', 'ad_group_ids', 'campaign_ids'])
+
         params = {
             'SelectCriteria': generate_params(
                 fields=['ids', 'ad_groups_ids', 'campaign_ids', 'retargeting_list_ids', 'interest_ids', 'states'],
@@ -503,6 +511,9 @@ class Bid(BaseEntity):
         :param offset: int
         :return: dict
         """
+        if not keyword_ids and not ad_group_ids and not campaign_ids:
+            raise ParameterError(['keyword_ids', 'ad_group_ids', 'campaign_ids'])
+
         params = {
             'SelectCriteria': generate_params(
                 fields=['keyword_ids', 'ad_group_ids', 'campaign_ids', 'serving_statuses'],
@@ -579,6 +590,9 @@ class BidsModifier(BaseEntity):
         :param offset: int
         :return: dict
         """
+        if not ids and not campaign_ids and not ad_group_ids:
+            raise ParameterError(['ids', 'campaign_ids', 'ad_group_ids'])
+
         local_variables = locals()
         params = {
             'SelectCriteria': generate_params(
