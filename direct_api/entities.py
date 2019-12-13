@@ -3,7 +3,7 @@ from .utils import generate_params, convert
 from .exceptions import ParameterError
 
 __all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
-           'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword']
+           'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword', 'Lead']
 
 
 class BaseEntity(object):
@@ -1046,4 +1046,245 @@ class Keyword(BaseEntity):
         :return: dict
         """
         return self._update(keywords)
+
+
+class KeywordsResearch(BaseEntity):
+    def __init__(self, client: object, service: str = 'keywordsresearch') -> None:
+        super().__init__(client, service)
+
+    def deduplicate(self, keywords: list, operation: Optional[str] = None) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordsresearch/deduplicate-docpage/
+        :param keywords: list
+        :param operation: str (MERGE_DUPLICATES or ELIMINATE_OVERLAPPING)
+        :return: dict
+        """
+        params = {'Keywords': keywords}
+        if operation is not None:
+            params['operation'] = operation
+        return self._client._send_api_request(self.service.lower(), 'deduplicate', params).json()
+
+    def has_search_volume(self, field_names: list, keywords: list, region_ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordsresearch/hasSearchVolume-docpage/
+        :param field_names: list
+        :param keywords: list
+        :param region_ids: list
+        :return: dict
+        """
+        params = {
+            'SelectCriteria': {'Keywords': keywords, 'RegionIds': region_ids},
+            'FieldNames': field_names
+        }
+        return self._client._send_api_request(self.service.lower(), 'hasSearchVolume', params).json()
+
+
+class Lead(BaseEntity):
+    def __init__(self, client: object, service: str = 'Leads') -> None:
+        super().__init__(client, service)
+
+    def get(self, field_names: list, turbo_page_ids: list, date_time_from: Optional[str] = None,
+            date_time_to: Optional[str] = None, limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/leads/get-docpage/
+        :param field_names: list
+        :param turbo_page_ids: list
+        :param date_time_from: str
+        :param date_time_to: str
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {
+            'SelectCriterioa': generate_params(
+                fields=['turbo_page_ids', 'date_time_from', 'date_time_to'],
+                function_kwargs=locals()
+            ),
+            'FieldNames': field_names,
+            'Page': {'Limit': limit, 'Offset': offset}
+        }
+        return self._get(params)
+
+
+class NegativeKeywordSharedSet(BaseEntity):
+    def __init__(self, client: object, service: str = 'NegativeKeywordSharedSets') -> None:
+        super().__init__(client, service)
+
+    def add(self, negative_keyword_shared_sets: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/add-docpage/
+        :param negative_keyword_shared_sets: list
+        :return: dict
+        """
+        return self._add(negative_keyword_shared_sets)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
+        if ids:
+            params['SelectCriteria'] = {'Ids': ids}
+        return self._get(params)
+
+    def update(self, negative_keyword_shared_sets: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/update-docpage/
+        :param negative_keyword_shared_sets: list
+        :return: dict
+        """
+        return self._update(negative_keyword_shared_sets)
+
+
+class RetargetingList(BaseEntity):
+    def __init__(self, client: object, service: str = 'RetargetingLists') -> None:
+        super().__init__(client, service)
+
+    def add(self, retargeting_list: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/add-docpage/
+        :param retargeting_list: list
+        :return: dict
+        """
+        return self._add(retargeting_list)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
+            limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param types: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
+        if ids or types:
+            params['SelectCriteria'] = generate_params(['ids', 'types'], locals())
+
+        return self._get(params)
+
+    def update(self, retargeting_list: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/update-docpage/
+        :param retargeting_list: list
+        :return: dict
+        """
+        return self._update(retargeting_list)
+
+
+class Sitelink(BaseEntity):
+    def __init__(self, client: object, service: str = 'Sitelinks') -> None:
+        super().__init__(client, service)
+
+    def add(self, sitelinks_sets: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/add-docpage/
+        :param sitelinks_sets: list
+        :return: dict
+        """
+        return self._add(sitelinks_sets)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, sitelinks_field_names: Optional[list], ids: Optional[list] = None,
+            limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/get-docpage/
+        :param field_names: list
+        :param sitelinks_field_names: list
+        :param ids: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
+        if ids:
+            params['SelectCriteria'] = {'Ids': ids}
+
+        return self._get(params)
+
+
+class TurboPage(BaseEntity):
+    def __init__(self, client: object, service: str = 'turbopages') -> None:
+        super().__init__(client, service)
+
+    def get(self, field_names: list, ids: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/turbopages/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
+        if ids:
+            params['SelectCriteria'] = {'Ids': ids}
+
+        return self._get(params)
+
+
+class VCard(BaseEntity):
+    def __init__(self, client: object, service: str = ' VCards') -> None:
+        super(). __init__(client, service)
+
+    def add(self, vcards: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/vcards/add-docpage/
+        :param vcards: list
+        :return: dict
+        """
+        return self._add(vcards)
+
+    def delete(self, ids: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/vcards/delete-docpage/
+        :param ids: list
+        :return: dict
+        """
+        return self._delete(ids)
+
+    def get(self, field_names: list, ids: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/vcards/get-docpage/
+        :param field_names: list
+        :param ids: list
+        :param limit: int
+        :param offset: int
+        :return: dict
+        """
+        params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
+        if ids:
+            params['SelectCriteria'] = {'Ids': ids}
+
+        return self._get(params)
 
