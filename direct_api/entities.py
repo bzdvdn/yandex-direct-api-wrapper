@@ -1257,7 +1257,7 @@ class TurboPage(BaseEntity):
 
 class VCard(BaseEntity):
     def __init__(self, client: object, service: str = ' VCards') -> None:
-        super(). __init__(client, service)
+        super().__init__(client, service)
 
     def add(self, vcards: list) -> dict:
         """
@@ -1290,3 +1290,53 @@ class VCard(BaseEntity):
 
         return self._get(params)
 
+
+class Report(BaseEntity):
+    def __init__(self, client: object, service: str = 'reports') -> None:
+        super().__init__(client, service)
+
+    def get(self, select_criteria: dict, field_names: list, report_name: str, report_type: str,
+            date_range_type: str, processing_mode: str = 'auto',
+            headers: Optional[dict] = None, goals: Optional[list] = None,
+            attribution_models: Optional[list] = None,
+            page: Optional[dict] = None, order_by: Optional[list] = None, format: str = 'TSV',
+            include_vat: Optional[str] = 'YES', include_discount: Optional[str] = None) -> str:
+        """
+        doc - https://yandex.ru/dev/direct/doc/reports/spec-docpage/
+        :param select_criteria: dict
+        :param field_names: list
+        :param report_name: str
+        :param processing_mode: str
+        :param report_type: str
+        :param date_range_type: str
+        :param headers: dict
+        :param goals: list
+        :param attribution_models: list
+        :param page: dict
+        :param order_by: list
+        :param format: str
+        :param include_vat: str
+        :param include_discount: str
+        :return: str
+        """
+
+        if headers:
+            headers['processingMode'] = processing_mode
+        else:
+            headers = {'processingMode': processing_mode}
+        self._client.set_session_headers(headers)
+
+        params = {
+            'SelectCriteria': select_criteria,
+            'FieldNames': field_names,
+            'ReportName': report_name,
+            'ReportType': report_type,
+            'DateRangeType': date_range_type,
+        }
+        params.update(
+            generate_params(
+                fields=['goals', 'attribution_models', 'page', 'order_by', 'format', 'include_vat', 'include_discount'],
+                function_kwargs=locals()
+            )
+        )
+        return self._client._get_reports(params)

@@ -1,4 +1,5 @@
 import requests
+from time import sleep
 from typing import Union, Optional
 
 from .exceptions import YdAPIError
@@ -34,6 +35,9 @@ class DirectAPI(object):
         self._clid = clid
         self._session.headers.update({"Accept-Language": "ru", "Client-Login": clid})
 
+    def set_session_headers(self, headers: dict) -> None:
+        self._session.headers.update(**headers)
+
     def set_lang(self, lang: str) -> None:
         """
         :param lang: str (ru, en, tr, uk)
@@ -57,6 +61,24 @@ class DirectAPI(object):
     @property
     def access_token(self) -> str:
         return self._access_token
+
+    def _get_reports(self, params: dict) -> str:
+        url = f'{self.API_URL}reports/'
+        while True:
+            req = self._session.post(url, json=params, timeout=10)
+            req.encoding = 'utf-8'
+            if req.status_code == 200:
+                return req.content
+            elif req.status_code == 201:
+                # print("Report apply to offline que")
+                retryIn = int(req.headers.get("retryIn", 10))
+                sleep(retryIn)
+            elif req.status_code == 202:
+                retryIn = int(req.headers.get("retryIn", 10))
+                sleep(retryIn)
+            else:
+                error = req.json()['error']
+                raise YdAPIError(error)
 
     def _send_api_request(self, service: str, method: str, params: dict) -> requests.Response:
         """
