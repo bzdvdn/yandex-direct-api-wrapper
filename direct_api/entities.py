@@ -5,7 +5,7 @@ from .exceptions import ParameterError
 __all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
            'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword', 'Lead',
            'NegativeKeywordSharedSet', 'Sitelink', 'KeywordsResearch', 'RetargetingList', 'VCard', 'TurboPage',
-           '']
+           'Report']
 
 
 class BaseEntity(object):
