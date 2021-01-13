@@ -1,15 +1,39 @@
-from typing import Union, Optional
+from typing import Union, Optional, TYPE_CHECKING
+
 from .utils import generate_params, convert
 from .exceptions import ParameterError
 
-__all__ = ['Ad', 'AdImage', 'AdExtension', 'AdGroup', 'Bid', 'AudienceTarget', 'AgencyClient', 'BidsModifier',
-           'Campaign', 'Change', 'Dictionary', 'DynamicTextAdTarget', 'KeywordBid', 'Keyword', 'Lead',
-           'NegativeKeywordSharedSet', 'Sitelink', 'KeywordsResearch', 'RetargetingList', 'VCard', 'TurboPage',
-           'Report']
+if TYPE_CHECKING:
+    from .client import DirectAPI
+
+__all__ = [
+    'Ad',
+    'AdImage',
+    'AdExtension',
+    'AdGroup',
+    'Bid',
+    'AudienceTarget',
+    'AgencyClient',
+    'BidsModifier',
+    'Campaign',
+    'Change',
+    'Dictionary',
+    'DynamicTextAdTarget',
+    'KeywordBid',
+    'Keyword',
+    'Lead',
+    'NegativeKeywordSharedSet',
+    'Sitelink',
+    'KeywordsResearch',
+    'RetargetingList',
+    'VCard',
+    'TurboPage',
+    'Report',
+]
 
 
 class BaseEntity(object):
-    def __init__(self, client: object, service: str = '') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = '') -> None:
         self._client = client
         self.service = service
 
@@ -27,34 +51,45 @@ class BaseEntity(object):
         :return: dict
         """
         params = {'SelectionCriteria': {'Ids': ids}}
-        return self._client._send_api_request(self.service.lower(), method, params).json()
+        return self._client._send_api_request(
+            self.service.lower(), method, params
+        ).json()
 
     def _add(self, objects: list) -> dict:
-        params = {
-            self.service: objects
-        }
-        return self.client._send_api_request(self.service.lower(), 'add', params).json()
+        params = {self.service: objects}
+        return self._client._send_api_request(
+            self.service.lower(), 'add', params
+        ).json()
 
     def _update(self, objects: list) -> dict:
-        params = {
-            self.service: objects
-        }
-        return self._client._send_api_request(self.service.lower(), 'update', params).json()
+        params = {self.service: objects}
+        return self._client._send_api_request(
+            self.service.lower(), 'update', params
+        ).json()
 
     def _get(self, params: dict) -> dict:
-        return self._client._send_api_request(self.service.lower(), 'get', params).json()
+        return self._client._send_api_request(
+            self.service.lower(), 'get', params
+        ).json()
 
     def _delete(self, ids: list) -> dict:
         return self._execute_method_by_ids('delete', ids)
 
 
 class AgencyClient(BaseEntity):
-    def __init__(self, client: object, service='AgencyClients'):
+    def __init__(self, client: 'DirectAPI', service='AgencyClients'):
         super().__init__(client, service)
 
-    def add(self, login: str, first_name: str, last_name: str, currency: str,
-            grants: Optional[list] = None, notification: Optional[dict] = None,
-            settings: Optional[list] = None):
+    def add(
+        self,
+        login: str,
+        first_name: str,
+        last_name: str,
+        currency: str,
+        grants: Optional[list] = None,
+        notification: Optional[dict] = None,
+        settings: Optional[list] = None,
+    ):
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/add-docpage/
         :param login: str
@@ -66,7 +101,7 @@ class AgencyClient(BaseEntity):
         :param settings: optional list
         :return: dict
         """
-        params = {
+        params: dict = {
             'Login': login,
             'FirstName': first_name,
             'LastName': last_name,
@@ -78,10 +113,18 @@ class AgencyClient(BaseEntity):
             params['Notification'] = notification
         if settings is not None:
             params['Settings'] = settings
-        return self._client._send_api_request(self.service.lower(), 'add', params).json()
+        return self._client._send_api_request(
+            self.service.lower(), 'add', params
+        ).json()
 
-    def get(self, field_names: list, logins: Optional[list] = None,
-            archived: Optional[str] = None, limit: int = 500, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        logins: Optional[list] = None,
+        archived: Optional[str] = None,
+        limit: int = 500,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/get-docpage/
         :param field_names: list
@@ -107,7 +150,7 @@ class AgencyClient(BaseEntity):
 
 
 class AdExtension(BaseEntity):
-    def __init__(self, client: object, service: str = 'AdExtension') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'AdExtension') -> None:
         super().__init__(client, service)
 
     def add(self, ad_extensions: list) -> dict:
@@ -126,10 +169,18 @@ class AdExtension(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
-            states: Optional[list] = None, statuses: Optional[list] = None,
-            modify_since: Optional[str] = None, callout_field_names: Optional[list] = None,
-            limit: int = 500, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        types: Optional[list] = None,
+        states: Optional[list] = None,
+        statuses: Optional[list] = None,
+        modify_since: Optional[str] = None,
+        callout_field_names: Optional[list] = None,
+        limit: int = 500,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/adextensions/get-docpage/
         :param field_names: list
@@ -145,21 +196,18 @@ class AdExtension(BaseEntity):
         """
         params = {
             'SelectionCriteria': generate_params(
-                ['ids', 'types', 'states', 'statuses', 'modify_since'],
-                locals()),
+                ['ids', 'types', 'states', 'statuses', 'modify_since'], locals()
+            ),
             'FieldNames': field_names,
-            'Page': {
-                'Limit': limit,
-                'Offset': offset,
-            }
+            'Page': {'Limit': limit, 'Offset': offset,},
         }
         if callout_field_names is not None:
             params['CalloutFieldNames'] = callout_field_names
-        return self._get(_params)
+        return self._get(params)
 
 
 class AdGroup(BaseEntity):
-    def __init__(self, client: object, service: str = 'AdGroups') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'AdGroups') -> None:
         super().__init__(client, service)
 
     def add(self, ad_groups: list) -> dict:
@@ -178,13 +226,22 @@ class AdGroup(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, campaign_ids: Optional[list] = None,
-            types: Optional[list] = None, statuses: Optional[list] = None,
-            serving_statuses: Optional[list] = None, app_icon_statuses: Optional[list] = None,
-            negative_keyword_shared_set_ids: Optional[list] = None, limit: int = 500,
-            offset: int = 0, mobile_app_ad_group_field_names: Optional[list] = None,
-            dynamic_text_ad_group_field_names: Optional[list] = None,
-            dynamic_text_feed_ad_group_field_names: Optional[list] = None) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        campaign_ids: Optional[list] = None,
+        types: Optional[list] = None,
+        statuses: Optional[list] = None,
+        serving_statuses: Optional[list] = None,
+        app_icon_statuses: Optional[list] = None,
+        negative_keyword_shared_set_ids: Optional[list] = None,
+        limit: int = 500,
+        offset: int = 0,
+        mobile_app_ad_group_field_names: Optional[list] = None,
+        dynamic_text_ad_group_field_names: Optional[list] = None,
+        dynamic_text_feed_ad_group_field_names: Optional[list] = None,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/adgroups/get-docpage/
         :param field_names: list (list of fields)
@@ -206,18 +263,28 @@ class AdGroup(BaseEntity):
             raise ParameterError(['ids', 'campaign_ids'])
         params = {
             'SelectionCriteria': generate_params(
-                ['campaign_ids', 'ids', 'types', 'statuses', 'serving_statuses',
-                 'app_icon_statuses', 'negative_keyword_shared_set_ids'], locals()
+                [
+                    'campaign_ids',
+                    'ids',
+                    'types',
+                    'statuses',
+                    'serving_statuses',
+                    'app_icon_statuses',
+                    'negative_keyword_shared_set_ids',
+                ],
+                locals(),
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         if mobile_app_ad_group_field_names is not None:
             params['MobileAppAdGroupFieldNames'] = mobile_app_ad_group_field_names
         if dynamic_text_ad_group_field_names is not None:
             params['DynamicTextAdGroupFieldNames'] = dynamic_text_ad_group_field_names
         if dynamic_text_feed_ad_group_field_names is not None:
-            params['DynamicTextFeedAdGroupFieldNames'] = dynamic_text_feed_ad_group_field_names
+            params[
+                'DynamicTextFeedAdGroupFieldNames'
+            ] = dynamic_text_feed_ad_group_field_names
         return self._get(params)
 
     def update(self, ad_groups: list) -> dict:
@@ -230,7 +297,7 @@ class AdGroup(BaseEntity):
 
 
 class AdImage(BaseEntity):
-    def __init__(self, client: object, service: str = 'AdImages') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'AdImages') -> None:
         super().__init__(client, service)
 
     def add(self, ad_images: list) -> dict:
@@ -246,15 +313,19 @@ class AdImage(BaseEntity):
         :param hashes: list (list of image hashes)
         :return: dict
         """
-        params = {
-            'SelectionCriteria': {
-                'AdImageHashes': hashes
-            }
-        }
-        return self._client._send_api_request(self.service.lower(), 'delete', params).json()
+        params = {'SelectionCriteria': {'AdImageHashes': hashes}}
+        return self._client._send_api_request(
+            self.service.lower(), 'delete', params
+        ).json()
 
-    def get(self, field_names: list, ad_images_hashes: Optional[list] = None,
-            associated: Optional[str] = None, limit: int = 500, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ad_images_hashes: Optional[list] = None,
+        associated: Optional[str] = None,
+        limit: int = 500,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/adimages/get-docpage/
         :param field_names: list (list of field_names)
@@ -265,18 +336,17 @@ class AdImage(BaseEntity):
         :return: dict
         """
         params = {
-            'SelectionCriteria': generate_params(['ad_images_hashes', 'associated'], locals()),
+            'SelectionCriteria': generate_params(
+                ['ad_images_hashes', 'associated'], locals()
+            ),
             'FieldNames': field_names,
-            'Page': {
-                'Limit': limit,
-                'Offset': offset,
-            }
+            'Page': {'Limit': limit, 'Offset': offset,},
         }
         return self._get(params)
 
 
 class Ad(BaseEntity):
-    def __init__(self, client: object, service: str = 'Ads') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Ads') -> None:
         super().__init__(client=client, service=service)
 
     def add(self, ads: list) -> dict:
@@ -303,21 +373,36 @@ class Ad(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, campaign_ids: Optional[list] = None,
-            ad_group_ids: Optional[list] = None, states: Optional[list] = None, statuses: Optional[list] = None,
-            types: Optional[list] = None, mobile: Optional[str] = None, v_card_ids: Optional[list] = None,
-            sitelink_set_ids: Optional[list] = None, ad_image_hashes: Optional[list] = None,
-            v_card_moderation_statuses: Optional[list] = None, sitelink_moderation_statuses: Optional[list] =
-            None, ad_image_moderation_statuses: Optional[list] = None, ad_extension_ids: Optional[list] = None,
-            text_ad_field_names: Optional[list] = None, text_ad_price_extension_field_names: Optional[list] =
-            None, mobile_app_field_names: Optional[list] = None, dynamic_text_ad_field_names: Optional[list] =
-            None, mobile_app_image_ad_field_names: Optional[list] = None,
-            text_ad_builder_ad_field_names: Optional[list] = None,
-            mobile_app_ad_builder_ad_field_names: Optional[list] = None,
-            cpc_video_ad_builder_ad_field_names: Optional[list] = None,
-            cpm_banner_ad_builder_ad_field_names: Optional[list] = None,
-            cpm_video_ad_builder_ad_field_names: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        campaign_ids: Optional[list] = None,
+        ad_group_ids: Optional[list] = None,
+        states: Optional[list] = None,
+        statuses: Optional[list] = None,
+        types: Optional[list] = None,
+        mobile: Optional[str] = None,
+        v_card_ids: Optional[list] = None,
+        sitelink_set_ids: Optional[list] = None,
+        ad_image_hashes: Optional[list] = None,
+        v_card_moderation_statuses: Optional[list] = None,
+        sitelink_moderation_statuses: Optional[list] = None,
+        ad_image_moderation_statuses: Optional[list] = None,
+        ad_extension_ids: Optional[list] = None,
+        text_ad_field_names: Optional[list] = None,
+        text_ad_price_extension_field_names: Optional[list] = None,
+        mobile_app_field_names: Optional[list] = None,
+        dynamic_text_ad_field_names: Optional[list] = None,
+        mobile_app_image_ad_field_names: Optional[list] = None,
+        text_ad_builder_ad_field_names: Optional[list] = None,
+        mobile_app_ad_builder_ad_field_names: Optional[list] = None,
+        cpc_video_ad_builder_ad_field_names: Optional[list] = None,
+        cpm_banner_ad_builder_ad_field_names: Optional[list] = None,
+        cpm_video_ad_builder_ad_field_names: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/ads/get-docpage/
         :param field_names: list
@@ -355,23 +440,42 @@ class Ad(BaseEntity):
         local_variables = locals()
         params = {
             'SelectionCriteria': generate_params(
-                fields=['ids', 'campaign_ids', 'ad_group_ids', 'states', 'statuses',
-                        'types', 'mobile', 'v_card_ids', 'sitelink_set_ids', 'ad_image_hashes',
-                        'v_card_moderation_statuses', 'sitelink_moderation_statuses', 'ad_image_moderation_statuses',
-                        'ad_extension_ids'],
-                function_kwargs=local_variables
+                fields=[
+                    'ids',
+                    'campaign_ids',
+                    'ad_group_ids',
+                    'states',
+                    'statuses',
+                    'types',
+                    'mobile',
+                    'v_card_ids',
+                    'sitelink_set_ids',
+                    'ad_image_hashes',
+                    'v_card_moderation_statuses',
+                    'sitelink_moderation_statuses',
+                    'ad_image_moderation_statuses',
+                    'ad_extension_ids',
+                ],
+                function_kwargs=local_variables,
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         params.update(
             generate_params(
-                fields=['text_ad_field_names', 'text_ad_price_extension_field_names', 'mobile_app_field_names',
-                        'dynamic_text_ad_field_names', 'mobile_app_image_ad_field_names',
-                        'text_ad_builder_ad_field_names', 'mobile_app_ad_builder_ad_field_names',
-                        'cpc_video_ad_builder_ad_field_names', 'cpm_banner_ad_builder_ad_field_names',
-                        'cpm_video_ad_builder_ad_field_names'],
-                function_kwargs=local_variables
+                fields=[
+                    'text_ad_field_names',
+                    'text_ad_price_extension_field_names',
+                    'mobile_app_field_names',
+                    'dynamic_text_ad_field_names',
+                    'mobile_app_image_ad_field_names',
+                    'text_ad_builder_ad_field_names',
+                    'mobile_app_ad_builder_ad_field_names',
+                    'cpc_video_ad_builder_ad_field_names',
+                    'cpm_banner_ad_builder_ad_field_names',
+                    'cpm_video_ad_builder_ad_field_names',
+                ],
+                function_kwargs=local_variables,
             )
         )
         return self._get(params)
@@ -418,7 +522,7 @@ class Ad(BaseEntity):
 
 
 class AudienceTarget(BaseEntity):
-    def __init__(self, client: object, service: str = 'AudienceTargets') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'AudienceTargets') -> None:
         super().__init__(client, service)
 
     def add(self, targets: list) -> dict:
@@ -437,10 +541,18 @@ class AudienceTarget(BaseEntity):
         """
         return self._delete(ids)
 
-    def get_audience_targets(self, field_names: list, ids: Optional[list] = None,
-                             ad_group_ids: Optional[list] = None, campaign_ids: Optional[list] = None,
-                             retargeting_list_ids: Optional[list] = None, interest_ids: Optional[list] = None,
-                             states: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+    def get_audience_targets(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        ad_group_ids: Optional[list] = None,
+        campaign_ids: Optional[list] = None,
+        retargeting_list_ids: Optional[list] = None,
+        interest_ids: Optional[list] = None,
+        states: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/get-docpage/
         :param field_names: list
@@ -459,8 +571,15 @@ class AudienceTarget(BaseEntity):
 
         params = {
             'SelectCriteria': generate_params(
-                fields=['ids', 'ad_groups_ids', 'campaign_ids', 'retargeting_list_ids', 'interest_ids', 'states'],
-                function_kwargs=locals()
+                fields=[
+                    'ids',
+                    'ad_groups_ids',
+                    'campaign_ids',
+                    'retargeting_list_ids',
+                    'interest_ids',
+                    'states',
+                ],
+                function_kwargs=locals(),
             ),
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
@@ -481,10 +600,10 @@ class AudienceTarget(BaseEntity):
         :param bids: list (list of Bid objects)
         :return: dict
         """
-        params = {
-            'Bids': bids
-        }
-        return self._client._send_api_request(self.service.lower(), 'setBids', params).json()
+        params = {'Bids': bids}
+        return self._client._send_api_request(
+            self.service.lower(), 'setBids', params
+        ).json()
 
     def suspend(self, ids: list) -> dict:
         """
@@ -496,12 +615,19 @@ class AudienceTarget(BaseEntity):
 
 
 class Bid(BaseEntity):
-    def __init_(self, client: object, service: str = 'Bids') -> None:
+    def __init_(self, client: 'DirectAPI', service: str = 'Bids') -> None:
         super().__init__(client, service)
 
-    def get(self, field_names: list, keyword_ids: Optional[list], ad_group_ids: Optional[list],
-            campaign_ids: Optional[list] = None, serving_statuses: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        keyword_ids: Optional[list],
+        ad_group_ids: Optional[list],
+        campaign_ids: Optional[list] = None,
+        serving_statuses: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/bids/get-docpage/
         :param field_names: list
@@ -518,8 +644,13 @@ class Bid(BaseEntity):
 
         params = {
             'SelectCriteria': generate_params(
-                fields=['keyword_ids', 'ad_group_ids', 'campaign_ids', 'serving_statuses'],
-                function_kwargs=locals()
+                fields=[
+                    'keyword_ids',
+                    'ad_group_ids',
+                    'campaign_ids',
+                    'serving_statuses',
+                ],
+                function_kwargs=locals(),
             ),
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
@@ -546,7 +677,7 @@ class Bid(BaseEntity):
 
 
 class BidsModifier(BaseEntity):
-    def __index__(self, client: object, service: str = 'BidsModifiers') -> None:
+    def __index__(self, client: 'DirectAPI', service: str = 'BidsModifiers') -> None:
         super().__init__(client, service)
 
     def add(self, bid_modifiers: list) -> dict:
@@ -565,15 +696,23 @@ class BidsModifier(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, campaign_ids: Optional[list] = None,
-            ad_group_ids: Optional[list] = None, types: Optional[list] = None, levels: Optional[list] = None,
-            mobile_adjustment_field_names: Optional[list] = None,
-            desktop_adjustment_field_names: Optional[list] = None,
-            demographics_adjustment_field_names: Optional[list] = None,
-            retargeting_adjustment_field_names: Optional[list] = None,
-            regional_adjustment_field_names: Optional[list] = None,
-            video_adjustment_field_names: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        campaign_ids: Optional[list] = None,
+        ad_group_ids: Optional[list] = None,
+        types: Optional[list] = None,
+        levels: Optional[list] = None,
+        mobile_adjustment_field_names: Optional[list] = None,
+        desktop_adjustment_field_names: Optional[list] = None,
+        demographics_adjustment_field_names: Optional[list] = None,
+        retargeting_adjustment_field_names: Optional[list] = None,
+        regional_adjustment_field_names: Optional[list] = None,
+        video_adjustment_field_names: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/get-docpage/
         :param field_names: list
@@ -599,17 +738,22 @@ class BidsModifier(BaseEntity):
         params = {
             'SelectCriteria': generate_params(
                 fields=['ids', 'campaign_ids', 'ad_group_ids', 'types', 'levels'],
-                function_kwargs=local_variables
+                function_kwargs=local_variables,
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         params.update(
             generate_params(
-                fields=['mobile_adjustment_field_names', 'desktop_adjustment_field_names',
-                        'demographics_adjustment_field_names', 'retargeting_adjustment_field_names',
-                        'regional_adjustment_field_names', 'video_adjustment_field_names'],
-                function_kwargs=local_variables
+                fields=[
+                    'mobile_adjustment_field_names',
+                    'desktop_adjustment_field_names',
+                    'demographics_adjustment_field_names',
+                    'retargeting_adjustment_field_names',
+                    'regional_adjustment_field_names',
+                    'video_adjustment_field_names',
+                ],
+                function_kwargs=local_variables,
             )
         )
         return self._get(params)
@@ -629,11 +773,13 @@ class BidsModifier(BaseEntity):
         :return: dict
         """
         params = {'BidModifierToggleItems': bid_modifier_toggle_items}
-        return self._client._send_api_request(self.service.lower(), 'toggle', params).json()
+        return self._client._send_api_request(
+            self.service.lower(), 'toggle', params
+        ).json()
 
 
 class Campaign(BaseEntity):
-    def __init__(self, client: object, service: str = 'Campaigns') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Campaigns') -> None:
         super().__init__(client, service)
 
     def add(self, campaigns: list) -> dict:
@@ -660,13 +806,21 @@ class Campaign(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
-            states: Optional[list] = None, statuses: Optional[list] = None, statuses_payments: Optional[list] = None,
-            text_campaign_field_names: Optional[list] = None,
-            mobile_app_campaign_field_names: Optional[list] = None,
-            dynamic_text_campaign_field_names: Optional[list] = None,
-            cpm_banner_campaign_field_names: Optional[list] = None,
-            limit: int = 1000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        types: Optional[list] = None,
+        states: Optional[list] = None,
+        statuses: Optional[list] = None,
+        statuses_payments: Optional[list] = None,
+        text_campaign_field_names: Optional[list] = None,
+        mobile_app_campaign_field_names: Optional[list] = None,
+        dynamic_text_campaign_field_names: Optional[list] = None,
+        cpm_banner_campaign_field_names: Optional[list] = None,
+        limit: int = 1000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/get-docpage/
         :param field_names: list
@@ -687,19 +841,25 @@ class Campaign(BaseEntity):
         params = {
             'SelectCriteria': generate_params(
                 fields=['ids', 'types', 'states', 'statuses', 'statuses_payments'],
-                function_kwargs=local_variables
+                function_kwargs=local_variables,
             ),
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
         }
-        params.update(generate_params(
-            fields=['text_campaign_field_names', 'mobile_app_campaign_field_names',
-                    'dynamic_text_campaign_field_names', 'cpm_banner_campaign_field_names'],
-            function_kwargs=local_variables
-        ))
+        params.update(
+            generate_params(
+                fields=[
+                    'text_campaign_field_names',
+                    'mobile_app_campaign_field_names',
+                    'dynamic_text_campaign_field_names',
+                    'cpm_banner_campaign_field_names',
+                ],
+                function_kwargs=local_variables,
+            )
+        )
         return self._get(params)
 
-    def resume(self, ids) -> ids:
+    def resume(self, ids) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/resume-docpage/
         :param ids: list
@@ -707,7 +867,7 @@ class Campaign(BaseEntity):
         """
         return self._execute_method_by_ids('resume', ids)
 
-    def suspend(self, ids) -> ids:
+    def suspend(self, ids) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/campaigns/suspend-docpage/
         :param ids: list
@@ -733,7 +893,7 @@ class Campaign(BaseEntity):
 
 
 class Change(BaseEntity):
-    def __init__(self, client: object, service: str = 'changes') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'changes') -> None:
         super().__init__(client, service)
 
     def _check(self, method: str, params: dict) -> dict:
@@ -743,7 +903,9 @@ class Change(BaseEntity):
         :return: dict
         """
         params = {convert(k): v for k, v in params if k != 'self'}
-        return self._client._send_api_request(self.service.lower(), method, params).json()
+        return self._client._send_api_request(
+            self.service.lower(), method, params
+        ).json()
 
     def check_dictionaries(self, timestamp: str) -> dict:
         """
@@ -761,8 +923,14 @@ class Change(BaseEntity):
         """
         return self._check('checkCampaigns', locals())
 
-    def check(self, timestamp: str, field_names: list, campaign_ids: Optional[list],
-              ad_group_ids: Optional[list] = None, ad_ids: Optional[list] = None) -> dict:
+    def check(
+        self,
+        timestamp: str,
+        field_names: list,
+        campaign_ids: Optional[list],
+        ad_group_ids: Optional[list] = None,
+        ad_ids: Optional[list] = None,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/changes/check-docpage/
         :param timestamp: str
@@ -773,20 +941,28 @@ class Change(BaseEntity):
         :return: dict
         """
         if not campaign_ids and not ad_group_ids and not ad_ids:
-            raise ValueError('campaign_ids, ag_group_ids, ad_ids must be implement one of them')
+            raise ValueError(
+                'campaign_ids, ag_group_ids, ad_ids must be implement one of them'
+            )
 
         return self._check('check', locals())
 
 
 class Creative(BaseEntity):
-    def __init__(self, client: object, service: str = 'Creatives') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Creatives') -> None:
         super().__init__(client, service)
 
-    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
-            video_extension_creative_field_names: Optional[list] = None,
-            cpc_video_creative_field_names: Optional[list] = None,
-            cpm_video_creative_field_names: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        types: Optional[list] = None,
+        video_extension_creative_field_names: Optional[list] = None,
+        cpc_video_creative_field_names: Optional[list] = None,
+        cpm_video_creative_field_names: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/creatives/get-docpage/
         :param field_names: list
@@ -802,19 +978,23 @@ class Creative(BaseEntity):
         params = {
             'SelectCriteria': generate_params(['ids', types], locals()),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
-        params.update(generate_params(
-            fields=['video_extension_creative_field_names', 'cpc_video_creative_field_names',
-                    'cpm_video_creative_field_names'],
-            function_kwargs=locals()
-        ),
+        params.update(
+            generate_params(
+                fields=[
+                    'video_extension_creative_field_names',
+                    'cpc_video_creative_field_names',
+                    'cpm_video_creative_field_names',
+                ],
+                function_kwargs=locals(),
+            ),
         )
         return self._get(params)
 
 
 class Dictionary(BaseEntity):
-    def __init__(self, client: object, service: str = 'Dictionaries') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Dictionaries') -> None:
         super().__init__(client, service)
 
     def get(self, dictionary_names: list) -> dict:
@@ -823,18 +1003,23 @@ class Dictionary(BaseEntity):
         :param dictionary_names: list
         :return: dict
         """
-        params = {
-            'DictionaryNames': dictionary_names
-        }
+        params = {'DictionaryNames': dictionary_names}
         return self._get(params)
 
 
 class DynamicTextAdTarget(BaseEntity):
-    def __init__(self, client: object, service: str = 'dynamictextadtargets') -> None:
+    def __init__(
+        self, client: 'DirectAPI', service: str = 'dynamictextadtargets'
+    ) -> None:
         super().__init__(client, service)
 
-    def add(self, webpages: list, bid: Optional[str] = None, context_bid: Optional[str] = None,
-            strategy_priority: Optional[str] = None) -> None:
+    def add(
+        self,
+        webpages: list,
+        bid: Optional[str] = None,
+        context_bid: Optional[str] = None,
+        strategy_priority: Optional[str] = None,
+    ) -> None:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/add-docpage/
         :param webpages: list
@@ -849,10 +1034,12 @@ class DynamicTextAdTarget(BaseEntity):
         params.update(
             generate_params(
                 fields=['bid', 'context_bid', 'strategy_priority'],
-                function_kwargs=locals()
+                function_kwargs=locals(),
             )
         )
-        return self._client._send_api_request(self.service.lower(), 'add', params).json()
+        return self._client._send_api_request(
+            self.service.lower(), 'add', params
+        ).json()
 
     def delete(self, ids: list) -> dict:
         """
@@ -862,9 +1049,16 @@ class DynamicTextAdTarget(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None,
-            ad_group_ids: Optional[list] = None, campaign_ids: Optional[list] = None,
-            states: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        ad_group_ids: Optional[list] = None,
+        campaign_ids: Optional[list] = None,
+        states: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/dynamictextadtargets/get-docpage/
         :param field_names: list
@@ -882,10 +1076,10 @@ class DynamicTextAdTarget(BaseEntity):
         params = {
             'SelectCriteria': generate_params(
                 fields=['ids', 'ad_group_ids', 'campaign_ids', 'states'],
-                function_kwargs=locals()
+                function_kwargs=locals(),
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         return self._get(params)
 
@@ -911,20 +1105,28 @@ class DynamicTextAdTarget(BaseEntity):
         :param bids: list
         :return: dict
         """
-        params = {
-            'Bids': bids
-        }
-        return self._client._send_api_request(self.service.lower(), 'setBids', params).json()
+        params = {'Bids': bids}
+        return self._client._send_api_request(
+            self.service.lower(), 'setBids', params
+        ).json()
 
 
 class KeywordBid(BaseEntity):
-    def __init__(self, client: object, service: str = 'KeywordBids') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'KeywordBids') -> None:
         super().__init__(client, service)
 
-    def get(self, field_names, campaign_ids: Optional[list] = None, ad_group_ids: Optional[list] = None,
-            keyword_ids: Optional[list] = None, serving_statuses: Optional[list] = None,
-            search_field_names: Optional[list] = None, network_field_names: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names,
+        campaign_ids: Optional[list] = None,
+        ad_group_ids: Optional[list] = None,
+        keyword_ids: Optional[list] = None,
+        serving_statuses: Optional[list] = None,
+        search_field_names: Optional[list] = None,
+        network_field_names: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordbids/get-docpage/
         :param field_names: list
@@ -943,16 +1145,21 @@ class KeywordBid(BaseEntity):
         local_variables = locals()
         params = {
             'SelectCriteria': generate_params(
-                fields=['campaign_ids', 'ad_group_ids', 'keyword_ids', 'serving_statuses'],
-                function_kwargs=local_variables
+                fields=[
+                    'campaign_ids',
+                    'ad_group_ids',
+                    'keyword_ids',
+                    'serving_statuses',
+                ],
+                function_kwargs=local_variables,
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         params.update(
             generate_params(
                 fields=['search_field_names', 'network_field_names'],
-                function_kwargs=local_variables
+                function_kwargs=local_variables,
             )
         )
         return self._get(params)
@@ -975,7 +1182,7 @@ class KeywordBid(BaseEntity):
 
 
 class Keyword(BaseEntity):
-    def __init__(self, client: object, service: str = 'Keywords') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Keywords') -> None:
         super().__init__(client, service)
 
     def add(self, keywords: list) -> dict:
@@ -994,10 +1201,19 @@ class Keyword(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, ad_group_ids: Optional[list] = None,
-            campaign_ids: Optional[list] = None, states: Optional[list] = None, statuses: Optional[list] = None,
-            serving_statuses: Optional[list] = None, modified_since: Optional[str] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        ad_group_ids: Optional[list] = None,
+        campaign_ids: Optional[list] = None,
+        states: Optional[list] = None,
+        statuses: Optional[list] = None,
+        serving_statuses: Optional[list] = None,
+        modified_since: Optional[str] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/keywords/get-docpage/
         :param field_names: list
@@ -1016,12 +1232,19 @@ class Keyword(BaseEntity):
             raise ParameterError(['ids', 'ad_group_ids', 'campaign_ids'])
         params = {
             'SelectCriteria': generate_params(
-                fields=['ids', 'ad_group_ids', 'campaign_ids', 'states', 'statuses', 'serving_statuses',
-                        'modified_since'],
-                function_kwargs=locals()
+                fields=[
+                    'ids',
+                    'ad_group_ids',
+                    'campaign_ids',
+                    'states',
+                    'statuses',
+                    'serving_statuses',
+                    'modified_since',
+                ],
+                function_kwargs=locals(),
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         return self._get(params)
 
@@ -1051,7 +1274,7 @@ class Keyword(BaseEntity):
 
 
 class KeywordsResearch(BaseEntity):
-    def __init__(self, client: object, service: str = 'keywordsresearch') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'keywordsresearch') -> None:
         super().__init__(client, service)
 
     def deduplicate(self, keywords: list, operation: Optional[str] = None) -> dict:
@@ -1061,12 +1284,16 @@ class KeywordsResearch(BaseEntity):
         :param operation: str (MERGE_DUPLICATES or ELIMINATE_OVERLAPPING)
         :return: dict
         """
-        params = {'Keywords': keywords}
+        params: dict = {'Keywords': keywords}
         if operation is not None:
             params['operation'] = operation
-        return self._client._send_api_request(self.service.lower(), 'deduplicate', params).json()
+        return self._client._send_api_request(
+            self.service.lower(), 'deduplicate', params
+        ).json()
 
-    def has_search_volume(self, field_names: list, keywords: list, region_ids: list) -> dict:
+    def has_search_volume(
+        self, field_names: list, keywords: list, region_ids: list
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordsresearch/hasSearchVolume-docpage/
         :param field_names: list
@@ -1076,17 +1303,26 @@ class KeywordsResearch(BaseEntity):
         """
         params = {
             'SelectCriteria': {'Keywords': keywords, 'RegionIds': region_ids},
-            'FieldNames': field_names
+            'FieldNames': field_names,
         }
-        return self._client._send_api_request(self.service.lower(), 'hasSearchVolume', params).json()
+        return self._client._send_api_request(
+            self.service.lower(), 'hasSearchVolume', params
+        ).json()
 
 
 class Lead(BaseEntity):
-    def __init__(self, client: object, service: str = 'Leads') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Leads') -> None:
         super().__init__(client, service)
 
-    def get(self, field_names: list, turbo_page_ids: list, date_time_from: Optional[str] = None,
-            date_time_to: Optional[str] = None, limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        turbo_page_ids: list,
+        date_time_from: Optional[str] = None,
+        date_time_to: Optional[str] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/leads/get-docpage/
         :param field_names: list
@@ -1100,16 +1336,18 @@ class Lead(BaseEntity):
         params = {
             'SelectCriterioa': generate_params(
                 fields=['turbo_page_ids', 'date_time_from', 'date_time_to'],
-                function_kwargs=locals()
+                function_kwargs=locals(),
             ),
             'FieldNames': field_names,
-            'Page': {'Limit': limit, 'Offset': offset}
+            'Page': {'Limit': limit, 'Offset': offset},
         }
         return self._get(params)
 
 
 class NegativeKeywordSharedSet(BaseEntity):
-    def __init__(self, client: object, service: str = 'NegativeKeywordSharedSets') -> None:
+    def __init__(
+        self, client: 'DirectAPI', service: str = 'NegativeKeywordSharedSets'
+    ) -> None:
         super().__init__(client, service)
 
     def add(self, negative_keyword_shared_sets: list) -> dict:
@@ -1128,7 +1366,13 @@ class NegativeKeywordSharedSet(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/get-docpage/
         :param field_names: list
@@ -1152,7 +1396,7 @@ class NegativeKeywordSharedSet(BaseEntity):
 
 
 class RetargetingList(BaseEntity):
-    def __init__(self, client: object, service: str = 'RetargetingLists') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'RetargetingLists') -> None:
         super().__init__(client, service)
 
     def add(self, retargeting_list: list) -> dict:
@@ -1171,8 +1415,14 @@ class RetargetingList(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, types: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        types: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/get-docpage/
         :param field_names: list
@@ -1198,7 +1448,7 @@ class RetargetingList(BaseEntity):
 
 
 class Sitelink(BaseEntity):
-    def __init__(self, client: object, service: str = 'Sitelinks') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'Sitelinks') -> None:
         super().__init__(client, service)
 
     def add(self, sitelinks_sets: list) -> dict:
@@ -1217,8 +1467,14 @@ class Sitelink(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, sitelinks_field_names: Optional[list], ids: Optional[list] = None,
-            limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        sitelinks_field_names: Optional[list],
+        ids: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/get-docpage/
         :param field_names: list
@@ -1236,10 +1492,16 @@ class Sitelink(BaseEntity):
 
 
 class TurboPage(BaseEntity):
-    def __init__(self, client: object, service: str = 'turbopages') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'turbopages') -> None:
         super().__init__(client, service)
 
-    def get(self, field_names: list, ids: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/turbopages/get-docpage/
         :param field_names: list
@@ -1256,7 +1518,7 @@ class TurboPage(BaseEntity):
 
 
 class VCard(BaseEntity):
-    def __init__(self, client: object, service: str = ' VCards') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = ' VCards') -> None:
         super().__init__(client, service)
 
     def add(self, vcards: list) -> dict:
@@ -1275,7 +1537,13 @@ class VCard(BaseEntity):
         """
         return self._delete(ids)
 
-    def get(self, field_names: list, ids: Optional[list] = None, limit: int = 10000, offset: int = 0) -> dict:
+    def get(
+        self,
+        field_names: list,
+        ids: Optional[list] = None,
+        limit: int = 10000,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/vcards/get-docpage/
         :param field_names: list
@@ -1292,15 +1560,26 @@ class VCard(BaseEntity):
 
 
 class Report(BaseEntity):
-    def __init__(self, client: object, service: str = 'reports') -> None:
+    def __init__(self, client: 'DirectAPI', service: str = 'reports') -> None:
         super().__init__(client, service)
 
-    def get(self, select_criteria: dict, field_names: list, report_name: str, report_type: str,
-            date_range_type: str, processing_mode: str = 'auto',
-            headers: Optional[dict] = None, goals: Optional[list] = None,
-            attribution_models: Optional[list] = None,
-            page: Optional[dict] = None, order_by: Optional[list] = None, format: str = 'TSV',
-            include_vat: Optional[str] = 'YES', include_discount: Optional[str] = None) -> str:
+    def get(
+        self,
+        select_criteria: dict,
+        field_names: list,
+        report_name: str,
+        report_type: str,
+        date_range_type: str,
+        processing_mode: str = 'auto',
+        headers: Optional[dict] = None,
+        goals: Optional[list] = None,
+        attribution_models: Optional[list] = None,
+        page: Optional[dict] = None,
+        order_by: Optional[list] = None,
+        format: str = 'TSV',
+        include_vat: Optional[str] = 'YES',
+        include_discount: Optional[str] = None,
+    ) -> str:
         """
         doc - https://yandex.ru/dev/direct/doc/reports/spec-docpage/
         :param select_criteria: dict
@@ -1335,8 +1614,16 @@ class Report(BaseEntity):
         }
         params.update(
             generate_params(
-                fields=['goals', 'attribution_models', 'page', 'order_by', 'format', 'include_vat', 'include_discount'],
-                function_kwargs=locals()
+                fields=[
+                    'goals',
+                    'attribution_models',
+                    'page',
+                    'order_by',
+                    'format',
+                    'include_vat',
+                    'include_discount',
+                ],
+                function_kwargs=locals(),
             )
         )
         return self._client._get_reports(params)
