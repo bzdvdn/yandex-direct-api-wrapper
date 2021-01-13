@@ -108,19 +108,19 @@ class DirectAPI(object):
     def _get_reports(self, params: dict) -> str:
         url = f'{self.API_URL}reports/'
         while True:
-            req = self._session.post(url, json=params, timeout=10)
-            req.encoding = 'utf-8'
-            if req.status_code == 200:
-                return req.content.decode('utf-8')
-            elif req.status_code == 201:
+            response = self._session.post(url, json=params, timeout=10)
+            response.encoding = 'utf-8'
+            if response.status_code == 200:
+                return response.content.decode('utf-8')
+            elif response.status_code == 201:
                 # print("Report apply to offline que")
-                retryIn = int(req.headers.get("retryIn", 10))
+                retryIn = int(response.headers.get("retryIn", 10))
                 sleep(retryIn)
-            elif req.status_code == 202:
-                retryIn = int(req.headers.get("retryIn", 10))
+            elif response.status_code == 202:
+                retryIn = int(response.headers.get("retryIn", 10))
                 sleep(retryIn)
             else:
-                error = req.json()['error']
+                error = response.json()['error']
                 raise YdAPIError(error)
 
     def _send_api_request(
