@@ -1,7 +1,7 @@
 import requests
 from time import sleep
 
-from .exceptions import YdAPIError
+from .exceptions import YdAPIError, YdAuthError
 from .entities import (
     Ad,
     AdImage,
@@ -139,5 +139,7 @@ class DirectAPI(object):
         response.raise_for_status()
         if response.status_code > 204:
             error_data = response.json()
+            if response.status_code == 401:
+                raise YdAuthError(error_data['error'])
             raise YdAPIError(error_data['error'])
         return response
