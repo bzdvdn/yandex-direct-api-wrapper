@@ -263,6 +263,7 @@ class AdGroup(BaseEntity):
         """
         if not ids and not campaign_ids:
             raise ParameterError(['ids', 'campaign_ids'])
+
         params = {
             'SelectionCriteria': generate_params(
                 [
@@ -569,7 +570,7 @@ class AudienceTarget(BaseEntity):
             raise ParameterError(['ids', 'ad_group_ids', 'campaign_ids'])
 
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=[
                     'ids',
                     'ad_groups_ids',
@@ -641,7 +642,7 @@ class Bid(BaseEntity):
             raise ParameterError(['keyword_ids', 'ad_group_ids', 'campaign_ids'])
 
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=[
                     'keyword_ids',
                     'ad_group_ids',
@@ -733,7 +734,7 @@ class BidsModifier(BaseEntity):
 
         local_variables = locals()
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=['ids', 'campaign_ids', 'ad_group_ids', 'types', 'levels'],
                 function_kwargs=local_variables,
             ),
@@ -835,7 +836,7 @@ class Campaign(BaseEntity):
         """
         local_variables = locals()
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=['ids', 'types', 'states', 'statuses', 'statuses_payments'],
                 function_kwargs=local_variables,
             ),
@@ -970,7 +971,7 @@ class Creative(BaseEntity):
         :return: dict
         """
         params = {
-            'SelectCriteria': generate_params(['ids', types], locals()),
+            'SelectionCriteria': generate_params(['ids', types], locals()),
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
         }
@@ -1064,7 +1065,7 @@ class DynamicTextAdTarget(BaseEntity):
             raise ParameterError(['ids', 'campaign_ids', 'ad_group_ids'])
 
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=['ids', 'ad_group_ids', 'campaign_ids', 'states'],
                 function_kwargs=locals(),
             ),
@@ -1133,7 +1134,7 @@ class KeywordBid(BaseEntity):
             raise ParameterError(['campaign_ids', 'ad_group_ids', 'keyword_ids'])
         local_variables = locals()
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=[
                     'campaign_ids',
                     'ad_group_ids',
@@ -1219,7 +1220,7 @@ class Keyword(BaseEntity):
         if not ids and not ad_group_ids and not campaign_ids:
             raise ParameterError(['ids', 'ad_group_ids', 'campaign_ids'])
         params = {
-            'SelectCriteria': generate_params(
+            'SelectionCriteria': generate_params(
                 fields=[
                     'ids',
                     'ad_group_ids',
@@ -1289,7 +1290,7 @@ class KeywordsResearch(BaseEntity):
         :return: dict
         """
         params = {
-            'SelectCriteria': {'Keywords': keywords, 'RegionIds': region_ids},
+            'SelectionCriteria': {'Keywords': keywords, 'RegionIds': region_ids},
             'FieldNames': field_names,
         }
         return self._client._send_api_request(
@@ -1366,7 +1367,7 @@ class NegativeKeywordSharedSet(BaseEntity):
         """
         params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
         if ids:
-            params['SelectCriteria'] = {'Ids': ids}
+            params['SelectionCriteria'] = {'Ids': ids}
         return self._get(params)
 
     def update(self, negative_keyword_shared_sets: list) -> dict:
@@ -1416,7 +1417,7 @@ class RetargetingList(BaseEntity):
         """
         params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
         if ids or types:
-            params['SelectCriteria'] = generate_params(['ids', 'types'], locals())
+            params['SelectionCriteria'] = generate_params(['ids', 'types'], locals())
 
         return self._get(params)
 
@@ -1467,7 +1468,7 @@ class Sitelink(BaseEntity):
         """
         params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
         if ids:
-            params['SelectCriteria'] = {'Ids': ids}
+            params['SelectionCriteria'] = {'Ids': ids}
 
         return self._get(params)
 
@@ -1492,7 +1493,7 @@ class TurboPage(BaseEntity):
         """
         params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
         if ids:
-            params['SelectCriteria'] = {'Ids': ids}
+            params['SelectionCriteria'] = {'Ids': ids}
 
         return self._get(params)
 
@@ -1533,7 +1534,7 @@ class VCard(BaseEntity):
         """
         params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
         if ids:
-            params['SelectCriteria'] = {'Ids': ids}
+            params['SelectionCriteria'] = {'Ids': ids}
 
         return self._get(params)
 
@@ -1584,7 +1585,7 @@ class Report(BaseEntity):
         self._client.set_session_headers(headers)
 
         params = {
-            'SelectCriteria': select_criteria,
+            'SelectionCriteria': select_criteria,
             'FieldNames': field_names,
             'ReportName': report_name,
             'ReportType': report_type,

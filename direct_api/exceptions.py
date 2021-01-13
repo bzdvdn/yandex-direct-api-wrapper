@@ -29,7 +29,7 @@ class YdAPIError(YdException):
         return f'{self.code}. {self.message}. {self.description} request_id={self.request_id}'
 
 
-class ParameterError(BaseException):
+class ParameterError(YdException):
     def __init__(self, params: list) -> None:
         super().__init__(params)
         self.params = params
