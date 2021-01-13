@@ -1,10 +1,31 @@
 import requests
 from time import sleep
-from typing import Union, Optional
 
 from .exceptions import YdAPIError
-from .utils import generate_params, convert
-from . import entities
+from .entities import (
+    Ad,
+    AdImage,
+    AdExtension,
+    AdGroup,
+    Bid,
+    AudienceTarget,
+    AgencyClient,
+    BidsModifier,
+    Campaign,
+    Change,
+    Dictionary,
+    DynamicTextAdTarget,
+    KeywordBid,
+    Keyword,
+    Lead,
+    NegativeKeywordSharedSet,
+    Sitelink,
+    KeywordsResearch,
+    RetargetingList,
+    VCard,
+    TurboPage,
+    Report,
+)
 
 
 class DirectAPI(object):
@@ -29,11 +50,29 @@ class DirectAPI(object):
         self._session.headers.update(
             {"Accept-Language": self._lang, "Client-Login": self._clid}
         )
-        self.__generate_attrs_by_entities()
-
-    def __generate_attrs_by_entities(self) -> None:
-        for attr in entities.__all__:
-            setattr(self, attr.lower(), property(getattr(entities, attr)(client=self)))
+        # add entities
+        self.Ad = Ad(self)
+        self.AdImage = AdImage(self)
+        self.AdExtension = AdExtension(self)
+        self.AdGroup = AdGroup(self)
+        self.Bid = Bid(self)
+        self.AudienceTarget = AudienceTarget(self)
+        self.AgencyClient = AgencyClient(self)
+        self.BidsModifier = BidsModifier(self)
+        self.Campaign = Campaign(self)
+        self.Change = Change(self)
+        self.Dictionary = Dictionary(self)
+        self.DynamicTextAdTarget = DynamicTextAdTarget(self)
+        self.KeywordBid = KeywordBid(self)
+        self.Keyword = Keyword(self)
+        self.Lead = Lead(self)
+        self.NegativeKeywordSharedSet = NegativeKeywordSharedSet(self)
+        self.Sitelink = Sitelink(self)
+        self.KeywordsResearch = KeywordsResearch(self)
+        self.RetargetingList = RetargetingList(self)
+        self.VCard = VCard(self)
+        self.TurboPage = TurboPage(self)
+        self.Report = Report(self)
 
     def set_clid(self, clid: str) -> None:
         self._clid = clid

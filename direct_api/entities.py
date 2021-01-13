@@ -1,4 +1,4 @@
-from typing import Union, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from .utils import generate_params, convert
 from .exceptions import ParameterError
@@ -6,7 +6,7 @@ from .exceptions import ParameterError
 if TYPE_CHECKING:
     from .client import DirectAPI
 
-__all__ = [
+__all__ = (
     'Ad',
     'AdImage',
     'AdExtension',
@@ -29,13 +29,14 @@ __all__ = [
     'VCard',
     'TurboPage',
     'Report',
-]
+)
 
 
 class BaseEntity(object):
-    def __init__(self, client: 'DirectAPI', service: str = '') -> None:
+    service: str = ''
+
+    def __init__(self, client: 'DirectAPI') -> None:
         self._client = client
-        self.service = service
 
     def __str__(self) -> str:
         return f'{self.__class__.__name__} - endpoint: {self.service}'
@@ -77,8 +78,7 @@ class BaseEntity(object):
 
 
 class AgencyClient(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service='AgencyClients'):
-        super().__init__(client, service)
+    service: str = 'AgencyClients'
 
     def add(
         self,
@@ -139,6 +139,10 @@ class AgencyClient(BaseEntity):
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
         }
+        if logins is not None:
+            params['logins'] = logins
+        if archived is not None:
+            params['archived'] = archived
         return self._get(params)
 
     def update(self, clients: list) -> dict:
@@ -150,8 +154,7 @@ class AgencyClient(BaseEntity):
 
 
 class AdExtension(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'AdExtension') -> None:
-        super().__init__(client, service)
+    service: str = 'AdExtension'
 
     def add(self, ad_extensions: list) -> dict:
         """
@@ -207,8 +210,7 @@ class AdExtension(BaseEntity):
 
 
 class AdGroup(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'AdGroups') -> None:
-        super().__init__(client, service)
+    service: str = 'AdGroups'
 
     def add(self, ad_groups: list) -> dict:
         """
@@ -297,8 +299,7 @@ class AdGroup(BaseEntity):
 
 
 class AdImage(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'AdImages') -> None:
-        super().__init__(client, service)
+    service: str = 'AdImages'
 
     def add(self, ad_images: list) -> dict:
         """
@@ -346,8 +347,7 @@ class AdImage(BaseEntity):
 
 
 class Ad(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Ads') -> None:
-        super().__init__(client=client, service=service)
+    service: str = 'Ads'
 
     def add(self, ads: list) -> dict:
         """
@@ -522,8 +522,7 @@ class Ad(BaseEntity):
 
 
 class AudienceTarget(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'AudienceTargets') -> None:
-        super().__init__(client, service)
+    service: str = 'AudienceTargets'
 
     def add(self, targets: list) -> dict:
         """
@@ -615,8 +614,7 @@ class AudienceTarget(BaseEntity):
 
 
 class Bid(BaseEntity):
-    def __init_(self, client: 'DirectAPI', service: str = 'Bids') -> None:
-        super().__init__(client, service)
+    service: str = 'Bids'
 
     def get(
         self,
@@ -677,8 +675,7 @@ class Bid(BaseEntity):
 
 
 class BidsModifier(BaseEntity):
-    def __index__(self, client: 'DirectAPI', service: str = 'BidsModifiers') -> None:
-        super().__init__(client, service)
+    service: str = 'BidsModifiers'
 
     def add(self, bid_modifiers: list) -> dict:
         """
@@ -779,8 +776,7 @@ class BidsModifier(BaseEntity):
 
 
 class Campaign(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Campaigns') -> None:
-        super().__init__(client, service)
+    service: str = 'Campaigns'
 
     def add(self, campaigns: list) -> dict:
         """
@@ -893,8 +889,7 @@ class Campaign(BaseEntity):
 
 
 class Change(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'changes') -> None:
-        super().__init__(client, service)
+    service: str = 'changes'
 
     def _check(self, method: str, params: dict) -> dict:
         """
@@ -949,8 +944,7 @@ class Change(BaseEntity):
 
 
 class Creative(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Creatives') -> None:
-        super().__init__(client, service)
+    service: str = 'Creatives'
 
     def get(
         self,
@@ -994,8 +988,7 @@ class Creative(BaseEntity):
 
 
 class Dictionary(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Dictionaries') -> None:
-        super().__init__(client, service)
+    service: str = 'Dictionaries'
 
     def get(self, dictionary_names: list) -> dict:
         """
@@ -1008,10 +1001,7 @@ class Dictionary(BaseEntity):
 
 
 class DynamicTextAdTarget(BaseEntity):
-    def __init__(
-        self, client: 'DirectAPI', service: str = 'dynamictextadtargets'
-    ) -> None:
-        super().__init__(client, service)
+    service: str = 'dynamictextadtargets'
 
     def add(
         self,
@@ -1112,8 +1102,7 @@ class DynamicTextAdTarget(BaseEntity):
 
 
 class KeywordBid(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'KeywordBids') -> None:
-        super().__init__(client, service)
+    service: str = 'KeywordBids'
 
     def get(
         self,
@@ -1182,8 +1171,7 @@ class KeywordBid(BaseEntity):
 
 
 class Keyword(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Keywords') -> None:
-        super().__init__(client, service)
+    service: str = 'Keywords'
 
     def add(self, keywords: list) -> dict:
         """
@@ -1274,8 +1262,7 @@ class Keyword(BaseEntity):
 
 
 class KeywordsResearch(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'keywordsresearch') -> None:
-        super().__init__(client, service)
+    service: str = 'keywordsresearch'
 
     def deduplicate(self, keywords: list, operation: Optional[str] = None) -> dict:
         """
@@ -1311,8 +1298,7 @@ class KeywordsResearch(BaseEntity):
 
 
 class Lead(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Leads') -> None:
-        super().__init__(client, service)
+    service: str = 'Leads'
 
     def get(
         self,
@@ -1345,10 +1331,7 @@ class Lead(BaseEntity):
 
 
 class NegativeKeywordSharedSet(BaseEntity):
-    def __init__(
-        self, client: 'DirectAPI', service: str = 'NegativeKeywordSharedSets'
-    ) -> None:
-        super().__init__(client, service)
+    service: str = 'NegativeKeywordSharedSets'
 
     def add(self, negative_keyword_shared_sets: list) -> dict:
         """
@@ -1396,8 +1379,7 @@ class NegativeKeywordSharedSet(BaseEntity):
 
 
 class RetargetingList(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'RetargetingLists') -> None:
-        super().__init__(client, service)
+    service: str = 'RetargetingLists'
 
     def add(self, retargeting_list: list) -> dict:
         """
@@ -1448,8 +1430,7 @@ class RetargetingList(BaseEntity):
 
 
 class Sitelink(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'Sitelinks') -> None:
-        super().__init__(client, service)
+    service: str = 'Sitelinks'
 
     def add(self, sitelinks_sets: list) -> dict:
         """
@@ -1492,8 +1473,7 @@ class Sitelink(BaseEntity):
 
 
 class TurboPage(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'turbopages') -> None:
-        super().__init__(client, service)
+    service: str = 'turbopages'
 
     def get(
         self,
@@ -1518,8 +1498,7 @@ class TurboPage(BaseEntity):
 
 
 class VCard(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = ' VCards') -> None:
-        super().__init__(client, service)
+    service: str = ' VCards'
 
     def add(self, vcards: list) -> dict:
         """
@@ -1560,8 +1539,7 @@ class VCard(BaseEntity):
 
 
 class Report(BaseEntity):
-    def __init__(self, client: 'DirectAPI', service: str = 'reports') -> None:
-        super().__init__(client, service)
+    service: str = 'reports'
 
     def get(
         self,
