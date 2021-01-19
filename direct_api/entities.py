@@ -29,6 +29,7 @@ __all__ = (
     'VCard',
     'TurboPage',
     'Report',
+    'Client',
 )
 
 
@@ -139,10 +140,6 @@ class AgencyClient(BaseEntity):
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
         }
-        if logins is not None:
-            params['logins'] = logins
-        if archived is not None:
-            params['archived'] = archived
         return self._get(params)
 
     def update(self, clients: list) -> dict:
@@ -1606,4 +1603,66 @@ class Report(BaseEntity):
                 function_kwargs=locals(),
             )
         )
-        return self._client._get_reports({'params':params})
+        return self._client._get_reports({'params': params})
+
+
+class Client(BaseEntity):
+    service: str = 'clients'
+
+    def add(
+        self,
+        login: str,
+        first_name: str,
+        last_name: str,
+        currency: str,
+        grants: Optional[list] = None,
+        notification: Optional[dict] = None,
+        settings: Optional[list] = None,
+    ):
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/add.html
+        :param login: str
+        :param first_name: str
+        :param last_name: str
+        :param currency: str
+        :param grants: list
+        :param notification: optional dict
+        :param settings: optional list
+        :return: dict
+        """
+        params: dict = {
+            'Login': login,
+            'FirstName': first_name,
+            'LastName': last_name,
+            'Currency': currency,
+        }
+        if grants is not None:
+            params['Grants'] = grants
+        if notification is not None:
+            params['Notification'] = notification
+        if settings is not None:
+            params['Settings'] = settings
+        return self._client._send_api_request(
+            self.service.lower(), 'add', params
+        ).json()
+
+    def get(self, field_names: list,) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/get.html
+        :param field_names: list
+        :return: dict
+        """
+        params = {
+            # 'SelectionCriteria': generate_params(['logins', 'archived'], locals()),
+            'FieldNames': field_names,
+            # 'Page': {'Limit': limit, 'Offset': offset},
+        }
+        return self._get(params)
+
+    def update(self, clients: list) -> dict:
+        """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/update.html
+        :param clients: list (list of Client object)
+        :return: dict
+        """
+        return self._update(clients)

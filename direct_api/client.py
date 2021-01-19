@@ -25,6 +25,7 @@ from .entities import (
     VCard,
     TurboPage,
     Report,
+    Client,
 )
 
 
@@ -73,6 +74,7 @@ class DirectAPI(object):
         self.VCard = VCard(self)
         self.TurboPage = TurboPage(self)
         self.Report = Report(self)
+        self.Client = Client(self)
 
     def set_clid(self, clid: str) -> None:
         self._clid = clid
