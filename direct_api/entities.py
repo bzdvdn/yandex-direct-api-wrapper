@@ -1544,7 +1544,7 @@ class Report(BaseEntity):
 
     def get(
         self,
-        select_criteria: dict,
+        selection_criteria: dict,
         field_names: list,
         report_name: str,
         report_type: str,
@@ -1561,7 +1561,7 @@ class Report(BaseEntity):
     ) -> str:
         """
         doc - https://yandex.ru/dev/direct/doc/reports/spec-docpage/
-        :param select_criteria: dict
+        :param selection_criteria: dict
         :param field_names: list
         :param report_name: str
         :param processing_mode: str
@@ -1585,7 +1585,7 @@ class Report(BaseEntity):
         self._client.set_session_headers(headers)
 
         params = {
-            'SelectionCriteria': select_criteria,
+            'SelectionCriteria': selection_criteria,
             'FieldNames': field_names,
             'ReportName': report_name,
             'ReportType': report_type,
