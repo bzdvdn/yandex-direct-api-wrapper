@@ -1591,6 +1591,8 @@ class Report(BaseEntity):
             'ReportType': report_type,
             'DateRangeType': date_range_type,
         }
+        if include_vat is not None:
+            params['IncludeVAT'] = include_vat
         params.update(
             generate_params(
                 fields=[
@@ -1599,10 +1601,9 @@ class Report(BaseEntity):
                     'page',
                     'order_by',
                     'format',
-                    'include_vat',
                     'include_discount',
                 ],
                 function_kwargs=locals(),
             )
         )
-        return self._client._get_reports(params)
+        return self._client._get_reports({'params':params})
