@@ -78,9 +78,9 @@ class DirectAPI(object):
 
     def set_clid(self, clid: str) -> None:
         self._clid = clid
-        self.set_session_headers({"Accept-Language": "ru", "Client-Login": clid})
+        self._set_session_headers({"Accept-Language": "ru", "Client-Login": clid})
 
-    def set_session_headers(self, headers: dict) -> None:
+    def _set_session_headers(self, headers: dict) -> None:
         self._session.headers.update(**headers)
 
     def set_lang(self, lang: str) -> None:
@@ -89,11 +89,11 @@ class DirectAPI(object):
         :return: None
         """
         self._lang = lang
-        self.set_session_headers({"Accept-Language": self._lang})
+        self._set_session_headers({"Accept-Language": self._lang})
 
     def set_access_token(self, access_token: str) -> None:
         self._access_token = access_token
-        self.set_session_headers({"Authorization": f'Bearer {self._access_token}'})
+        self._set_session_headers({"Authorization": f'Bearer {self._access_token}'})
 
     @property
     def clid(self) -> str:

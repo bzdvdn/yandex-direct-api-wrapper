@@ -1579,7 +1579,7 @@ class Report(BaseEntity):
             headers['processingMode'] = processing_mode
         else:
             headers = {'processingMode': processing_mode}
-        self._client.set_session_headers(headers)
+        self._client._set_session_headers(headers)
 
         params = {
             'SelectionCriteria': selection_criteria,
