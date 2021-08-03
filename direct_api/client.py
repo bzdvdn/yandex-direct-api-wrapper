@@ -43,9 +43,9 @@ class DirectAPI(object):
         """
         self._access_token = access_token
         self._clid = clid
-        self.refresh_token = refresh_token
+        self._refresh_token = refresh_token
         self._session = requests.Session()
-        self._lang = lang
+        self._lang = lang.lower()
         self._session.headers['Accept'] = 'application/json'
         self._session.headers['Authorization'] = f'Bearer {self._access_token}'
         self._session.headers.update(
@@ -78,7 +78,7 @@ class DirectAPI(object):
 
     def set_clid(self, clid: str) -> None:
         self._clid = clid
-        self._set_session_headers({"Accept-Language": "ru", "Client-Login": clid})
+        self._set_session_headers({"Client-Login": clid})
 
     def _set_session_headers(self, headers: dict) -> None:
         self._session.headers.update(**headers)

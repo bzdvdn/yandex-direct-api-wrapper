@@ -1,4 +1,5 @@
 from typing import Optional, TYPE_CHECKING
+from abc import ABC
 
 from .utils import generate_params, convert
 from .exceptions import ParameterError
@@ -33,7 +34,7 @@ __all__ = (
 )
 
 
-class BaseEntity(object):
+class BaseEntity(ABC):
     service: str = ''
 
     def __init__(self, client: 'DirectAPI') -> None:
@@ -144,6 +145,7 @@ class AgencyClient(BaseEntity):
 
     def update(self, clients: list) -> dict:
         """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/update.html
         :param clients: list (list of Client object)
         :return: dict
         """
