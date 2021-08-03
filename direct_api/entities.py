@@ -311,6 +311,7 @@ class AdImage(BaseEntity):
 
     def delete(self, hashes: list) -> dict:
         """
+        doc - https://yandex.ru/dev/direct/doc/ref-v5/adimages/delete.html
         :param hashes: list (list of image hashes)
         :return: dict
         """
