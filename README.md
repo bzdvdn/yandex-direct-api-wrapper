@@ -235,3 +235,364 @@ result = client.AdImage.delete(hashes)
 field_names = ['AdImageHash', 'Name']
 result = client.AdImage.get(field_names)
 ```
+
+### Ad:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/add-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ads  | list |  \*required   |
+
+```python
+ads = [{'AdgroupId': '<id>', 'TextAd': {}}]
+result = client.Ad.add(ads)
+```
+
+### Ad:archive
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/archive-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['123', '124']
+result = client.Ad.archive(ids)
+```
+
+### Ad:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['123', '124']
+result = client.Ad.delete(ids)
+```
+
+### Ad:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/get-docpage/
+- params:
+
+|                 name                 | type | default value |
+| :----------------------------------: | :--: | :-----------: |
+|             field_names              | list |  \*required   |
+|                 ids                  | list |     None      |
+|             campaign_ids             | list |     None      |
+|             ad_group_ids             | list |     None      |
+|                states                | list |     None      |
+|               statuses               | list |     None      |
+|                types                 | list |     None      |
+|                mobile                | str  |     None      |
+|              v_card_ids              | list |     None      |
+|           sitelink_set_ids           | list |     None      |
+|           ad_image_hashes            | list |     None      |
+|      v_card_moderation_statuses      | list |     None      |
+|     sitelink_moderation_statuses     | list |     None      |
+|     ad_image_moderation_statuses     | list |     None      |
+|           ad_extension_ids           | list |     None      |
+|         text_ad_field_names          | list |     None      |
+| text_ad_price_extension_field_names  | list |     None      |
+|        mobile_app_field_names        | list |     None      |
+|     dynamic_text_ad_field_names      | list |     None      |
+|   mobile_app_image_ad_field_names    | list |     None      |
+|    text_ad_builder_ad_field_names    | list |     None      |
+| mobile_app_ad_builder_ad_field_names | list |     None      |
+| cpc_video_ad_builder_ad_field_names  | list |     None      |
+| cpm_banner_ad_builder_ad_field_names | list |     None      |
+| cpm_video_ad_builder_ad_field_names  | list |     None      |
+|                limit                 | int  |      500      |
+|                offset                | int  |       0       |
+
+```python
+field_names = ['Id', 'CampaignId']
+result = client.Ad.get(field_names)
+```
+
+### Ad:moderate
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/moderate-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['123', '124']
+result = client.Ad.moderate(ids)
+```
+
+### Ad:resume
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/resume-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['123', '124']
+result = client.Ad.resume(ids)
+```
+
+### Ad:suspend
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/suspend-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['123', '124']
+result = client.Ad.suspend(ids)
+```
+
+### Ad:unarchive
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/unarchive-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['123', '124']
+result = client.Ad.unarchive(ids)
+```
+
+### Ad:update
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/ads/update-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ads  | list |  \*required   |
+
+```python
+ads = [{'AdgroupId': '<id>', 'TextAd': {}, 'Id': '<Id>'}]
+result = client.Ad.update(ads)
+```
+
+### AudienceTarget:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/add-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ads  | list |  \*required   |
+
+```python
+ads = [{'AdgroupId': '<id>', }]
+result = client.AudienceTarget.add(ids)
+```
+
+### AudienceTarget:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['232324353']
+result = client.AudienceTarget.delete(ids)
+```
+
+### AudienceTarget:get_audience_targets
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/get-docpage/
+- params:
+
+|         name         | type | default value |
+| :------------------: | :--: | :-----------: |
+|     field_names      | list |  \*required   |
+|         ids          | list |     None      |
+|     ad_group_ids     | list |     None      |
+|     campaign_ids     | list |     None      |
+| retargeting_list_ids | list |     None      |
+|     interest_ids     | list |     None      |
+|        states        | list |     None      |
+|        limit         | int  |      500      |
+|        offset        | int  |       0       |
+
+```python
+field_names = ['Id']
+result = client.AudienceTarget.get_audience_targets(field_names, campaigns_ids=[123])
+```
+
+### AudienceTarget:resume
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/resume-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['232324353']
+result = client.AudienceTarget.resume(ids)
+```
+
+### AudienceTarget:set_bids
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/audiencetargets/setBids-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| bids | list |  \*required   |
+
+```python
+bids = [{'Id': '<id>', 'AdGroupId': '<Id>'}]
+result = client.AudienceTarget.set_bids(bids)
+```
+
+### Bid:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bids/get-docpage/
+- params:
+
+|       name       | type | default value |
+| :--------------: | :--: | :-----------: |
+|   field_names    | list |  \*required   |
+|   keyword_ids    | list |     None      |
+|   ad_group_ids   | list |     None      |
+|   campaign_ids   | list |     None      |
+| serving_statuses | list |     None      |
+|      limit       | int  |      500      |
+|      offset      | int  |       0       |
+
+```python
+field_names = ['Id']
+result = client.Bid.suspend(field_names, campaign_ids=[1232424532])
+```
+
+### Bid:set
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bids/set-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| bids | list |  \*required   |
+
+```python
+bids = [{'Bid': '<long>'}]
+result = client.Bid.set(bids)
+```
+
+### Bid:set_auto
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bids/setAuto-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| bids | list |  \*required   |
+
+```python
+bids = [{'CampaignID': '<long>', 'Scope': 'SEARCH'}]
+result = client.Bid.set_auto(bids)
+```
+
+### BidsModifier:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/add-docpage/
+- params:
+
+|     name      | type | default value |
+| :-----------: | :--: | :-----------: |
+| bid_modifiers | list |  \*required   |
+
+```python
+bid_modifiers = [{'MobileAdjustment': {'BidModifier': '<id>'}}]
+result = client.BidsModifier.add(bid_modifiers)
+```
+
+### BidsModifier:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['1312324343']
+result = client.BidsModifier.delete(ids)
+```
+
+### BidsModifier:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/get-docpage/
+- params:
+
+|                name                 | type | default value |
+| :---------------------------------: | :--: | :-----------: |
+|             field_names             | list |  \*required   |
+|                 ids                 | list |     None      |
+|            campaign_ids             | list |     None      |
+|            ad_group_ids             | list |     None      |
+|                types                | list |     None      |
+|               levels                | list |     None      |
+|    mobile_adjustment_field_names    | list |     None      |
+|   desktop_adjustment_field_names    | list |     None      |
+| demographics_adjustment_field_names | list |     None      |
+| retargeting_adjustment_field_names  | list |     None      |
+|   regional_adjustment_field_names   | list |     None      |
+|    video_adjustment_field_names     | list |     None      |
+|                limit                | list |      500      |
+|               offset                | list |       0       |
+
+```python
+field_names = ['Id', 'CampaignId', 'Type']
+result = client.BidsModifier.get(field_names, campaign_ids=['123453534'])
+```
+
+### BidsModifier:set
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/set-docpage/
+- params:
+
+|     name      | type | default value |
+| :-----------: | :--: | :-----------: |
+| bid_modifiers | list |  \*required   |
+
+```python
+ids = [{'Id': '<id>', 'BidModifier': 124242}]
+result = client.BidsModifier.set(bid_modifiers)
+```
+
+### BidsModifier:toggle
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/toggle-docpage/
+- params:
+
+|           name            | type | default value |
+| :-----------------------: | :--: | :-----------: |
+| bid_modifier_toggle_items | list |  \*required   |
+
+```python
+bid_modifier_toggle_items = [{'CampaignId': '<id>', 'Type': "DEMOGRAPHICS_ADJUSTMENT","Enabled": "YES"}]
+result = client.BidsModifier.toggle(bid_modifier_toggle_items)
+```

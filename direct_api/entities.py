@@ -756,13 +756,16 @@ class BidsModifier(BaseEntity):
         )
         return self._get(params)
 
-    def set(self, ids: list) -> dict:
+    def set(self, bid_modifiers: list) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/bidmodifiers/set-docpage/
-        :param ids: list
+        :param bid_modifiers: list
         :return: dict
         """
-        return self._execute_method_by_ids('set', ids)
+        params = {'BidModifiers': bid_modifiers}
+        return self._client._send_api_request(
+            self.service.lower(), 'set', params
+        ).json()
 
     def toggle(self, bid_modifier_toggle_items: list) -> dict:
         """
