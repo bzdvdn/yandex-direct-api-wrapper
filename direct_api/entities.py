@@ -906,7 +906,7 @@ class Change(BaseEntity):
             self.service.lower(), method, params
         ).json()
 
-    def check_dictionaries(self, timestamp: str) -> dict:
+    def check_dictionaries(self, timestamp: int) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/changes/checkDictionaries-docpage/
         :param timestamp: str
@@ -914,7 +914,7 @@ class Change(BaseEntity):
         """
         return self._check('checkDictionaries', locals())
 
-    def check_campaigns(self, timestamp: str) -> dict:
+    def check_campaigns(self, timestamp: int) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/changes/checkDictionaries-docpage/
         :param timestamp: str
@@ -924,9 +924,9 @@ class Change(BaseEntity):
 
     def check(
         self,
-        timestamp: str,
+        timestamp: int,
         field_names: list,
-        campaign_ids: Optional[list],
+        campaign_ids: Optional[list] = None,
         ad_group_ids: Optional[list] = None,
         ad_ids: Optional[list] = None,
     ) -> dict:
@@ -974,7 +974,7 @@ class Creative(BaseEntity):
         :return: dict
         """
         params = {
-            'SelectionCriteria': generate_params(['ids', types], locals()),
+            'SelectionCriteria': generate_params(['ids', 'types'], locals()),
             'FieldNames': field_names,
             'Page': {'Limit': limit, 'Offset': offset},
         }
@@ -1157,21 +1157,23 @@ class KeywordBid(BaseEntity):
         )
         return self._get(params)
 
-    def set(self, ids: list) -> dict:
+    def set(self, keyword_bids: list) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordbids/set-docpage/
-        :param ids: list
+        :param keyword_bids: list
         :return: dict
         """
-        return self._execute_method_by_ids('set', ids)
+        params = {'KeywordBids': keyword_bids}
+        return self._client._send_api_request(self.service, 'set', params).json()
 
-    def set_auto(self, ids: list) -> dict:
+    def set_auto(self, keyword_bids: list) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/keywordbids/setAuto-docpage/
-        :param ids: list
+        :param keyword_bids: list
         :return: dict
         """
-        return self._execute_method_by_ids('setAuto', ids)
+        params = {'KeywordBids': keyword_bids}
+        return self._client._send_api_request(self.service, 'set_auto', params).json()
 
 
 class Keyword(BaseEntity):
