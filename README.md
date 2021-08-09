@@ -956,3 +956,272 @@ set_bit_item = {} # set bid item from doc
 keyword_bids = [set_bit_item]
 result = client.KeywordBid.set_auto(keyword_bids)
 ```
+
+### Keyword:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywords/add-docpage/
+- params:
+
+|   name   | type | default value |
+| :------: | :--: | :-----------: |
+| keywords | list |  \*required   |
+
+```python
+keyword = {"Keyworod": "yandex-dircet-api-python", "AdGroupId": "12324324334"}
+keywords = [keyword]
+result = client.Keyword.add(keywords)
+```
+
+### Keyword:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywords/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['1232432547357348']
+result = client.Keyword.delete(ids)
+```
+
+### Keyword:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywords/get-docpage/
+- params:
+
+|       name       | type | default value |
+| :--------------: | :--: | :-----------: |
+|   field_names    | list |  \*required   |
+|       ids        | list |     None      |
+|   ad_group_ids   | list |     None      |
+|   campaign_ids   | list |     None      |
+|      states      | list |     None      |
+|     statuses     | list |     None      |
+| serving_statuses | list |     None      |
+|  modified_since  | str  |     None      |
+|      limit       | int  |     10000     |
+|      offset      | int  |       0       |
+
+```python
+field_names = ['Id', 'Keyword']
+result = client.Keyword.delete(field_names, campaign_ids=['23232343583'])
+```
+
+### Keyword:resume
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywords/resume-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['1232432547357348']
+result = client.Keyword.resume(ids)
+```
+
+### Keyword:suspend
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywords/suspend-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = ['1232432547357348']
+result = client.Keyword.resume(ids)
+```
+
+### Keyword:update
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywords/update-docpage/
+- params:
+
+|   name   | type | default value |
+| :------: | :--: | :-----------: |
+| keywords | list |  \*required   |
+
+```python
+keywords = [{'Id': '123123243534', 'Keyword': 'updated yandex'}]
+result = client.Keyword.update(keywords)
+```
+
+### KeywordsResearch:deduplicate
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywordsresearch/deduplicate-docpage/
+- params:
+
+|   name    | type | default value |
+| :-------: | :--: | :-----------: |
+| keywords  | list |  \*required   |
+| operation | list |     None      |
+
+```python
+keywords = [{'Id': '123123243534', 'Keyword': 'updated yandex'}]
+operation  = 'MERGE_DUPLICATES'
+result = client.KeywordsResearch.deduplicate(keywords, operation)
+```
+
+### KeywordsResearch:has_search_volume
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/keywordsresearch/hasSearchVolume-docpage/
+- params:
+
+|    name     | type | default value |
+| :---------: | :--: | :-----------: |
+| field_names | list |  \*required   |
+|  keywords   | list |  \*required   |
+| region_ids  | list |  \*required   |
+
+```python
+field_names = ['Keyword']
+keywords = [{'Id': '123123243534', 'Keyword': 'updated yandex'}]
+region_ids  = ['123123123']
+result = client.KeywordsResearch.has_search_volume(field_names, keywords, region_ids)
+```
+
+### Lead:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/leads/get-docpage/
+- params:
+
+|      name      | type | default value |
+| :------------: | :--: | :-----------: |
+|  field_names   | list |  \*required   |
+| turbo_page_ids | list |     None      |
+| date_time_from | str  |     None      |
+|  date_time_to  | str  |     None      |
+|     limit      | int  |     10000     |
+|     offset     | int  |       0       |
+
+```python
+field_names = ['TurboPageId', 'TurboPageName', 'id']
+result = client.Lead.get(field_names)
+```
+
+### NegativeKeywordSharedSet:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/add-docpage/
+- params:
+
+|             name             | type | default value |
+| :--------------------------: | :--: | :-----------: |
+| negative_keyword_shared_sets | list |  \*required   |
+
+```python
+negative_keyword_shared_sets = [{'Name': 'name', 'NegativeKeywords': [123]}]
+result = client.Lead.get(negative_keyword_shared_sets)
+```
+
+### NegativeKeywordSharedSet:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = [12312325]
+result = client.NegativeKeywordSharedSet.delete(ids)
+```
+
+### NegativeKeywordSharedSet:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/get-docpage/
+- params:
+
+|    name     | type | default value |
+| :---------: | :--: | :-----------: |
+| field_names | list |  \*required   |
+|     ids     | list |     None      |
+|    limit    | int  |     10000     |
+|   offset    | int  |       0       |
+
+```python
+field_names = ['Id', 'Name', 'NegativeKeywords']
+result = client.NegativeKeywordSharedSet.get(field_names)
+```
+
+### NegativeKeywordSharedSet:update
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/negativekeywordsharedsets/get-docpage/
+- params:
+
+|             name             | type | default value |
+| :--------------------------: | :--: | :-----------: |
+| negative_keyword_shared_sets | list |  \*required   |
+
+```python
+negative_keyword_shared_sets = [{'Id': '12324234234', 'Name': 'test', 'NegativeKeywords': ['1231321']}]
+result = client.NegativeKeywordSharedSet.update(negative_keyword_shared_sets)
+```
+
+### RetargetingList:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/add-docpage/
+- params:
+
+|       name       | type | default value |
+| :--------------: | :--: | :-----------: |
+| retargeting_list | list |  \*required   |
+
+```python
+retargeting_obj = {} # object from doc
+retargeting_list = [retargeting_obj]
+result = client.RetargetingList.add(retargeting_list)
+```
+
+### RetargetingList:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = [12313254325345345353]
+result = client.RetargetingList.delete(ids)
+```
+
+### RetargetingList:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/get-docpage/
+- params:
+
+|    name     | type | default value |
+| :---------: | :--: | :-----------: |
+| field_names | list |  \*required   |
+|     ids     | list |     None      |
+|    types    | list |     None      |
+|    limit    | int  |     10000     |
+|   offset    | int  |       0       |
+
+```python
+field_names = ['Type', 'Id', 'Name']
+ids = [12313254325345345353]
+result = client.RetargetingList.get(field_names, ids=ids)
+```
+
+### RetargetingList:update
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/retargetinglists/update-docpage/
+- params:
+
+|       name       | type | default value |
+| :--------------: | :--: | :-----------: |
+| retargeting_list | list |  \*required   |
+
+```python
+retargeting_obj = {} # object from doc
+retargeting_list = [retargeting_obj]
+result = client.RetargetingList.update(retargeting_list)
+```
