@@ -7,7 +7,7 @@ class YdAuthError(YdException):
 
 
 class YdAPIError(YdException):
-    __slots__ = ['error', 'code', 'message', 'request_params', 'request_id']
+    __slots__ = ('error', 'code', 'message', 'request_params', 'request_id')
 
     def __init__(self, error_data):
         super(YdAPIError, self).__init__()

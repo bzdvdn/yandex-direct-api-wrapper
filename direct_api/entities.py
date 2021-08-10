@@ -1474,6 +1474,8 @@ class Sitelink(BaseEntity):
         params = {'FieldNames': field_names, 'Page': {'Limit': limit, 'Offset': offset}}
         if ids:
             params['SelectionCriteria'] = {'Ids': ids}
+        if sitelinks_field_names:
+            params['SitelinkFieldNames'] = sitelinks_field_names
 
         return self._get(params)
 
@@ -1562,7 +1564,7 @@ class Report(BaseEntity):
         order_by: Optional[list] = None,
         format: str = 'TSV',
         include_vat: Optional[str] = 'YES',
-        include_discount: Optional[str] = None,
+        include_discount: Optional[str] = "NO",
     ) -> str:
         """
         doc - https://yandex.ru/dev/direct/doc/reports/spec-docpage/
@@ -1654,17 +1656,31 @@ class Client(BaseEntity):
             self.service.lower(), 'add', params
         ).json()
 
-    def get(self, field_names: list,) -> dict:
+    def get(
+        self,
+        field_names: list,
+        logins: Optional[list] = None,
+        archived: Optional[str] = None,
+        limit: int = 500,
+        offset: int = 0,
+    ) -> dict:
         """
         doc - https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/get.html
         :param field_names: list
+        :param logins: optional list
+        :param archived: optional str
+        :param limit: int
+        :param offset: int
         :return: dict
         """
         params = {
-            # 'SelectionCriteria': generate_params(['logins', 'archived'], locals()),
             'FieldNames': field_names,
-            # 'Page': {'Limit': limit, 'Offset': offset},
+            'Page': {'Limit': limit, 'Offset': offset},
         }
+        if logins or archived:
+            params['SelectionCriteria'] = (
+                generate_params(['logins', 'archived'], locals()),
+            )
         return self._get(params)
 
     def update(self, clients: list) -> dict:

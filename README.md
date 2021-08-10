@@ -4,7 +4,7 @@
 
 Instal user `pip`...
 
-    pip install yandex-direct-api-wrapper
+    pip install yandex-direct-api
 
 ## Usage
 
@@ -1225,3 +1225,225 @@ retargeting_obj = {} # object from doc
 retargeting_list = [retargeting_obj]
 result = client.RetargetingList.update(retargeting_list)
 ```
+
+### Sitelink:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/add-docpage/
+- params:
+
+|      name      | type | default value |
+| :------------: | :--: | :-----------: |
+| sitelinks_sets | list |  \*required   |
+
+```python
+sitelinks = [{'Title': 'sitelink1'}]
+sitelinks_sets = [sitelinks]
+result = client.Sitelink.add(sitelinks_sets)
+```
+
+### Sitelink:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = [12313254325345345353]
+result = client.Sitelink.delete(ids)
+```
+
+### Sitelink:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/sitelinks/get-docpage/
+- params:
+
+|         name          | type | default value |
+| :-------------------: | :--: | :-----------: |
+|      field_names      | list |  \*required   |
+|          ids          | list |     None      |
+| sitelinks_field_names | list |     None      |
+|         limit         | int  |     10000     |
+|        offset         | int  |       0       |
+
+```python
+field_names = ['Id', 'Sitelinks']
+result = client.Sitelink.get(field_names)
+```
+
+### TurboPage:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/turbopages/get-docpage/
+- params:
+
+|    name     | type | default value |
+| :---------: | :--: | :-----------: |
+| field_names | list |  \*required   |
+|     ids     | list |     None      |
+|    limit    | int  |     10000     |
+|   offset    | int  |       0       |
+
+```python
+field_names = ['Id', 'Name', 'Href']
+result = client.TurboPage.get(field_names)
+```
+
+### VCard:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/vcards/add-docpage/
+- params:
+
+|  name  | type | default value |
+| :----: | :--: | :-----------: |
+| vcards | list |  \*required   |
+
+```python
+vcard = {
+    'CampaignId': '1231231232131',
+    'Country': '<country>',
+    'City': '<City>',
+    'CompanyName': '<CompanyName>',
+}
+vcards = [vcard]
+result = client.VCard.add(vcards)
+```
+
+### VCard:delete
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/vcards/delete-docpage/
+- params:
+
+| name | type | default value |
+| :--: | :--: | :-----------: |
+| ids  | list |  \*required   |
+
+```python
+ids = [12313254325345345353]
+result = client.Sitelink.delete(ids)
+```
+
+### VCard:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/vcards/get-docpage/
+- params:
+
+|    name     | type | default value |
+| :---------: | :--: | :-----------: |
+| field_names | list |  \*required   |
+|     ids     | list |     None      |
+|    limit    | int  |     10000     |
+|   offset    | int  |       0       |
+
+```python
+field_names = ['Id', 'Country', 'City']
+result = client.VCard.get(field_names)
+```
+
+### Report:get
+
+- doc: https://yandex.ru/dev/direct/doc/reports/spec-docpage/
+- params:
+
+|        name        | type | default value |
+| :----------------: | :--: | :-----------: |
+| selection_criteria | list |  \*required   |
+|    field_names     | list |  \*required   |
+|    report_name     | str  |  \*required   |
+|    report_type     | str  |  \*required   |
+|  date_range_type   | str  |  \*required   |
+|  processing_mode   | str  |     auto      |
+|      headers       | dict |     None      |
+|       goals        | list |     None      |
+| attribution_models | list |     None      |
+|        page        | dict |     None      |
+|      order_by      | list |     None      |
+|       format       | str  |      TSV      |
+|    include_vat     | str  |      YES      |
+|  include_discount  | str  |      NO       |
+
+```python
+selection_criteria= {
+    "DateFrom": date_from.strftime('%Y-%m-%d'),
+    "DateTo": date_to.strftime('%Y-%m-%d'),
+}
+
+field_names = [
+    "Date",
+    "Impressions",
+    "Clicks",
+    "Cost",
+    "CriterionId",
+    "Criterion",
+    "CampaignId",
+    "AdId",
+    "Device",
+    "AdGroupId",
+    "CampaignType",
+    "AvgClickPosition",
+    "Slot",
+    "LocationOfPresenceId",
+    "Placement",
+    "AvgImpressionPosition",
+    "LocationOfPresenceName",
+    "CampaignName",
+    "AdNetworkType",
+]
+page = {"Limit": 100000000},
+report_name = f"ActualData - 123"
+report_type = "CUSTOM_REPORT",
+date_range_type = "CUSTOM_DATE"
+result = client.Report.get(
+    selection_criteria=selection_criteria,
+    field_names=field_names,
+    report_name=report_name,
+    report_type=report_type,
+    date_range_type=date_range_type,
+    page=page,
+)
+```
+
+### Client:add
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/add.html
+- params:
+
+|     name     | type | default value |
+| :----------: | :--: | :-----------: |
+|    login     | str  |  \*required   |
+|  first_name  | str  |  \*required   |
+|  last_name   | str  |  \*required   |
+|   currency   | str  |  \*required   |
+|    grants    | list |     None      |
+| notification | dict |     None      |
+|   settings   | dict |     None      |
+
+```python
+result = client.Client.add(login='clid', first_name='ivan', last_name='petrov', currency='RUB')
+```
+
+### Client:get
+
+- doc: https://yandex.ru/dev/direct/doc/ref-v5/agencyclients/get.html
+- params:
+
+|    name     | type | default value |
+| :---------: | :--: | :-----------: |
+| field_names | list |  \*required   |
+|   logins    | list |     None      |
+|  archived   | str  |     None      |
+|    limit    | int  |      500      |
+|   offset    | int  |       0       |
+
+```python
+field_names = ['ClientId', 'ClientInfo']
+result = client.Client.get(field_names)
+```
+
+## TODO:
+
+- [ ] examples
+- [ ] tests
+- [ ] docs
+- [ ] Travis CI

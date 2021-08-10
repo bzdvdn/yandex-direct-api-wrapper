@@ -9,7 +9,7 @@ def read(f):
 
 
 setup(
-    name="yandex-direct-api-wrapper",
+    name="yandex-direct-api",
     version=__version__,
     packages=find_packages(exclude=("tests",)),
     install_requires=["requests>=2.22.0"],
